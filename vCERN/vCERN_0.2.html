@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vCERN — Unified Framework v2.0</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+
+:root {
+  --bg: #020704;
+  --surface: #050e08;
+  --panel: #071210;
+  --border: #0d2e1a;
+  --border2: #1a5c35;
+  --primary: #00ff6a;
+  --primary-dim: #009940;
+  --secondary: #ff6b00;
+  --tertiary: #00cfff;
+  --gold: #ffe156;
+  --purple: #c084fc;
+  --red: #ff3355;
+  --muted: #2d5a40;
+  --text: #7dcea0;
+  --bright: #e0ffe8;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-display: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,255,106,0.015) 2px,
+    rgba(0,255,106,0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── CANVAS ── */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+.wrap { position: relative; z-index: 2; }
+
+/* ═══════════════════════════════
+   HERO
+═══════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr auto;
+  border-bottom: 1px solid var(--border2);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-left {
+  grid-row: 1 / 3;
+  padding: 80px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--border2);
+  position: relative;
+}
+
+.hero-left::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(ellipse at 20% 60%, rgba(0,255,106,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.sys-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  color: var(--primary-dim);
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.sys-tag::before {
+  content: '';
+  width: 30px; height: 1px;
+  background: var(--primary-dim);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(5rem, 12vw, 10rem);
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+  text-shadow: 0 0 60px rgba(0,255,106,0.3), 0 0 120px rgba(0,255,106,0.1);
+  margin-bottom: 0.5rem;
+  animation: glitch 8s infinite;
+}
+
+@keyframes glitch {
+  0%, 92%, 100% { text-shadow: 0 0 60px rgba(0,255,106,0.3); clip-path: none; transform: none; }
+  93% { text-shadow: -2px 0 var(--secondary), 2px 0 var(--tertiary); }
+  94% { clip-path: inset(20% 0 60% 0); transform: translate(-2px); }
+  95% { clip-path: inset(60% 0 10% 0); transform: translate(2px); }
+  96% { clip-path: none; transform: none; text-shadow: 0 0 60px rgba(0,255,106,0.3); }
+}
+
+.hero-ver {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+  margin-bottom: 3rem;
+}
+
+.hero-desc {
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: var(--text);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+
+.hero-counts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border2);
+  margin-top: auto;
+}
+
+.count-cell {
+  background: var(--surface);
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+.count-val {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: block;
+  line-height: 1;
+}
+.count-label {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+.hero-right {
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.terminal-block {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.terminal-header {
+  background: var(--border);
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border2);
+}
+.terminal-header span {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--primary-dim);
+  letter-spacing: 0.2em;
+}
+.t-dot { width: 8px; height: 8px; border-radius: 50%; }
+.t-dot.g { background: var(--primary); box-shadow: 0 0 6px var(--primary); animation: pulse 2s infinite; }
+.t-dot.y { background: var(--gold); }
+.t-dot.r { background: var(--red); }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+.terminal-body {
+  padding: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 2;
+  color: var(--text);
+  flex: 1;
+  overflow-y: auto;
+}
+
+.t-line { display: block; }
+.t-cmd { color: var(--primary); }
+.t-out { color: var(--text); padding-left: 1rem; }
+.t-val { color: var(--gold); }
+.t-dim { color: var(--muted); }
+.t-hi { color: var(--tertiary); }
+.t-warn { color: var(--secondary); }
+.t-cursor { display: inline-block; width: 8px; height: 14px; background: var(--primary); animation: blink 1s step-end infinite; vertical-align: middle; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+
+/* ═══════════════════════════════
+   NAV
+═══════════════════════════════ */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(2,7,4,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border2);
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav::-webkit-scrollbar { display: none; }
+
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--border2);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  text-shadow: 0 0 15px rgba(0,255,106,0.5);
+}
+
+nav a {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0 1.2rem;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  border-right: 1px solid var(--border);
+  transition: all 0.2s;
+  white-space: nowrap;
+  height: 48px;
+}
+nav a:hover { color: var(--primary); background: rgba(0,255,106,0.03); }
+
+/* ═══════════════════════════════
+   SECTIONS
+═══════════════════════════════ */
+.section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 5rem 3rem;
+}
+
+.sec-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.sec-num {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  color: var(--primary-dim);
+  letter-spacing: 0.3em;
+}
+.sec-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: var(--bright);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+.sec-badge {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
+  padding: 0.3rem 0.7rem;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════
+   ARCHITECTURE
+═══════════════════════════════ */
+.arch-wrap {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border2);
+}
+
+.arch-diagram {
+  background: var(--surface);
+  padding: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.9;
+  overflow-x: auto;
+}
+
+.arch-sidebar {
+  background: var(--panel);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.arch-item {
+  background: var(--surface);
+  padding: 0.85rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  border-left: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.arch-item:hover { border-left-color: var(--primary); }
+.arch-item strong { color: var(--bright); display: block; margin-bottom: 0.2rem; }
+.arch-item span { color: var(--muted); }
+.ai { border-left-color: var(--primary); }
+.ai2 { border-left-color: var(--secondary); }
+.ai3 { border-left-color: var(--tertiary); }
+.ai4 { border-left-color: var(--gold); }
+.ai5 { border-left-color: var(--purple); }
+
+.c { color: var(--primary); }
+.c2 { color: var(--secondary); }
+.c3 { color: var(--tertiary); }
+.c4 { color: var(--gold); }
+.c5 { color: var(--purple); }
+.cm { color: var(--muted); }
+
+/* ═══════════════════════════════
+   PILLARS
+═══════════════════════════════ */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border2);
+}
+.pillar {
+  background: var(--surface);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+.pillar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 2px;
+  transition: width 0.4s;
+}
+.pillar:hover { background: var(--panel); }
+.pillar:hover::after { width: 100%; }
+.p1::after { background: var(--primary); }
+.p2::after { background: var(--tertiary); }
+.p3::after { background: var(--secondary); }
+.p4::after { background: var(--gold); }
+.p5::after { background: var(--purple); }
+.p6::after { background: var(--red); }
+.p7::after { background: var(--primary); }
+.p8::after { background: var(--tertiary); }
+
+.pillar-n {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+.pillar-bar {
+  width: 20px; height: 2px;
+  margin-bottom: 1rem;
+}
+.pillar-name {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--bright);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+.pillar-count {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--border2);
+  position: absolute;
+  bottom: 1.5rem; right: 1.5rem;
+  line-height: 1;
+  transition: color 0.3s;
+}
+.pillar:hover .pillar-count { color: var(--primary-dim); }
+.pillar-desc {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════
+   ENHANCEMENTS TABS
+═══════════════════════════════ */
+.tab-row {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-bottom: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab-row::-webkit-scrollbar { display: none; }
+
+.tb {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--muted);
+  padding: 0.9rem 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  position: relative;
+}
+.tb:hover { color: var(--text); }
+.tb.on {
+  color: var(--primary);
+  background: var(--panel);
+}
+.tb.on::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 2px;
+  background: var(--primary);
+}
+
+.tab-panel { display: none; }
+.tab-panel.on { display: block; }
+
+.enh-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border2);
+}
+
+.ecard {
+  background: var(--surface);
+  padding: 1.5rem;
+  transition: background 0.2s;
+  position: relative;
+}
+.ecard:hover { background: var(--panel); }
+.ecard:hover .en { color: var(--primary); }
+
+.en {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--border2);
+  line-height: 1;
+  margin-bottom: 0.6rem;
+  transition: color 0.2s;
+}
+.et {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--bright);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+.ed {
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+.ei {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+}
+.ei::before { content: '→ '; }
+
+/* ═══════════════════════════════
+   ONTOLOGY SECTION
+═══════════════════════════════ */
+.onto-intro {
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  padding: 2rem 3rem;
+  margin-bottom: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+.onto-glyph {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--purple);
+  text-shadow: 0 0 40px rgba(192,132,252,0.4);
+  line-height: 1;
+}
+.onto-text h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--purple);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+}
+.onto-text p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.onto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border2);
+  border-top: none;
+}
+
+.ocard {
+  background: var(--surface);
+  padding: 1.25rem 1.5rem;
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+}
+.ocard:hover {
+  background: var(--panel);
+  border-left-color: var(--purple);
+}
+.oi {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--purple);
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+.ot {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bright);
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+.od {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════════
+   ROADMAP
+═══════════════════════════════ */
+.roadmap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border2);
+}
+.phase {
+  background: var(--surface);
+  padding: 2rem;
+  position: relative;
+}
+.ph-num {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--border);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+.ph-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+.ph-dur {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.ph-item {
+  font-size: 0.78rem;
+  color: var(--text);
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(13,46,26,0.5);
+  display: flex;
+  gap: 0.5rem;
+}
+.ph-item::before {
+  content: '▸';
+  color: var(--primary-dim);
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  margin-top: 0.15rem;
+}
+
+/* ═══════════════════════════════
+   RISK TABLE
+═══════════════════════════════ */
+.rtable-wrap {
+  border: 1px solid var(--border2);
+  overflow: hidden;
+}
+.rtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.rtable th {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  padding: 0.75rem 1.5rem;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border2);
+}
+.rtable td {
+  padding: 0.9rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.rtable tr:last-child td { border-bottom: none; }
+.rtable tr:hover td { background: var(--surface); }
+.rtable td:first-child { color: var(--bright); font-weight: 600; }
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  padding: 0.2rem 0.5rem;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+.bh { color: var(--red); border-color: var(--red); background: rgba(255,51,85,0.1); }
+.bm { color: var(--gold); border-color: var(--gold); background: rgba(255,225,86,0.08); }
+.bl { color: var(--primary); border-color: var(--primary); background: rgba(0,255,106,0.07); }
+
+/* ═══════════════════════════════
+   ASS CODE BLOCK
+═══════════════════════════════ */
+.code-block {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.8;
+}
+.code-header {
+  background: var(--border);
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border2);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+}
+.code-body { padding: 1.5rem; overflow-x: auto; }
+.kw { color: var(--tertiary); }
+.str { color: var(--gold); }
+.cmnt { color: var(--muted); }
+.fn { color: var(--secondary); }
+.var { color: var(--primary); }
+.num { color: var(--purple); }
+
+/* ═══════════════════════════════
+   NODES TABLE
+═══════════════════════════════ */
+.nodes-wrap {
+  border: 1px solid var(--border2);
+  overflow: hidden;
+}
+.nodes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.nodes-table th {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  padding: 0.7rem 1.5rem;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border2);
+}
+.nodes-table td {
+  padding: 0.8rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.nodes-table tr:last-child td { border-bottom: none; }
+.nodes-table tr:hover td { background: var(--surface); }
+.nodes-table td:first-child { font-family: var(--font-mono); color: var(--primary); font-size: 0.75rem; }
+.nodes-table td:nth-child(2) { color: var(--text); font-style: italic; }
+.nodes-table td:nth-child(3) { color: var(--muted); }
+
+/* ═══════════════════════════════
+   QNVM PANEL
+═══════════════════════════════ */
+.qnvm-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border2);
+}
+.qnvm-cell {
+  background: var(--surface);
+  padding: 2rem;
+}
+.qnvm-cell h4 {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--tertiary);
+  margin-bottom: 0.75rem;
+}
+.qnvm-cell p {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.qnvm-cell .qval {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  color: var(--tertiary);
+  display: block;
+  margin: 0.5rem 0;
+}
+
+/* ═══════════════════════════════
+   SUMMARY
+═══════════════════════════════ */
+.summary {
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  text-align: center;
+  padding: 6rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.summary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, rgba(0,255,106,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+.sum-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.sum-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 80px rgba(0,255,106,0.25);
+  margin-bottom: 1.5rem;
+}
+.sum-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+.sum-metrics {
+  display: flex;
+  justify-content: center;
+  gap: 5rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+.sm { text-align: center; }
+.sm-val {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 900;
+  display: block;
+  line-height: 1;
+}
+.sm-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  margin-top: 0.3rem;
+  text-transform: uppercase;
+}
+.sum-tags {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.stag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════
+   FOOTER
+═══════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border2);
+  padding: 1.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════
+   RESPONSIVE
+═══════════════════════════════ */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-left { border-right: none; border-bottom: 1px solid var(--border2); padding: 50px 30px; }
+  .hero-right { padding: 30px; }
+  .hero-counts { grid-template-columns: repeat(2, 1fr); }
+  .pillar-grid { grid-template-columns: repeat(2, 1fr); }
+  .roadmap { grid-template-columns: repeat(2, 1fr); }
+  .arch-wrap { grid-template-columns: 1fr; }
+  .qnvm-grid { grid-template-columns: 1fr; }
+  .onto-intro { grid-template-columns: 1fr; }
+  .section { padding: 3rem 1.5rem; }
+}
+@media (max-width: 600px) {
+  .pillar-grid { grid-template-columns: 1fr; }
+  .roadmap { grid-template-columns: 1fr; }
+  .hero-title { font-size: 4.5rem; }
+}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="wrap">
+
+<!-- ════════════ HERO ════════════ -->
+<div class="hero">
+  <div class="hero-left">
+    <p class="sys-tag">Unified Framework Document · v2.0 · 2026-03-01</p>
+    <h1 class="hero-title">vCERN</h1>
+    <p class="hero-ver">VIRTUAL RE-CREATION OF CERN · QUANTUM-ENHANCED PARTICLE PHYSICS PLATFORM</p>
+    <p class="hero-desc">A living digital twin of the world's most complex particle physics laboratory — fusing accelerator science, quantum computation, autonomous AI, and ontological frontier research into a single civilisation-grade infrastructure.</p>
+    <div class="hero-counts">
+      <div class="count-cell"><span class="count-val" style="color:var(--primary)">144</span><span class="count-label">Total Enhancements</span></div>
+      <div class="count-cell"><span class="count-val" style="color:var(--tertiary)">420M</span><span class="count-label">Qubit Substrate</span></div>
+      <div class="count-cell"><span class="count-val" style="color:var(--secondary)">11</span><span class="count-label">Framework Pillars</span></div>
+      <div class="count-cell"><span class="count-val" style="color:var(--gold)">4</span><span class="count-label">Release Phases</span></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="terminal-block">
+      <div class="terminal-header">
+        <div class="t-dot g"></div><div class="t-dot y"></div><div class="t-dot r"></div>
+        <span>vCERN ORCHESTRATOR — BOOT SEQUENCE</span>
+      </div>
+      <div class="terminal-body">
+        <span class="t-line t-dim">$ vcern --init --mode=full --qnvm=420M</span>
+        <span class="t-line t-cmd">▸ Initialising Core Simulation Engine...</span>
+        <span class="t-line t-out"><span class="t-val">QNVM</span> substrate online — <span class="t-hi">420,000,000 qubits</span> allocated</span>
+        <span class="t-line t-out">Zeno-locked gate fidelity: <span class="t-val">99.97%</span></span>
+        <span class="t-line t-cmd">▸ Loading Mesh Node Cluster...</span>
+        <span class="t-line t-out">Accelerator nodes: <span class="t-val">8</span> (LHC sectors 1–8)</span>
+        <span class="t-line t-out">Detector nodes: <span class="t-val">24</span> (ATLAS·CMS·ALICE·LHCb)</span>
+        <span class="t-line t-out">Trigger nodes: <span class="t-val">2</span> (L1·HLT)</span>
+        <span class="t-line t-cmd">▸ Activating Samsara-NULL Framework...</span>
+        <span class="t-line t-out">Entropy monitor: <span class="t-val">ACTIVE</span> — threshold 0.12</span>
+        <span class="t-line t-out">Rebirth snapshots: <span class="t-hi">loaded</span></span>
+        <span class="t-line t-cmd">▸ Connecting Enhancement Modules...</span>
+        <span class="t-line t-out">Set I (48 modules): <span class="t-val">ONLINE</span></span>
+        <span class="t-line t-out">Set II frontier (48 modules): <span class="t-val">ONLINE</span></span>
+        <span class="t-line t-out">Ontology layer (48 modules): <span class="t-val">ONLINE</span></span>
+        <span class="t-line t-cmd">▸ Beam dynamics engine ready</span>
+        <span class="t-line t-out">Collision energy: <span class="t-val">13.6 TeV</span> (Run 3)</span>
+        <span class="t-line t-out">Pileup μ: <span class="t-hi">60</span> (configurable to 200)</span>
+        <span class="t-line t-warn">⚠ Ontology subsystems running in EXPERIMENTAL mode</span>
+        <span class="t-line t-cmd">▸ vCERN ready. All 144 enhancements active.</span>
+        <span class="t-line t-dim">$ _<span class="t-cursor"></span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ NAV ════════════ -->
+<nav>
+  <div class="nav-brand">vCERN</div>
+  <a href="#architecture">Architecture</a>
+  <a href="#pillars">Pillars</a>
+  <a href="#qnvm">QNVM</a>
+  <a href="#nodes">Mesh Nodes</a>
+  <a href="#ass">ASS</a>
+  <a href="#set1">Enhancements I</a>
+  <a href="#set2">Frontier II</a>
+  <a href="#ontology">Ontology III</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#risks">Risks</a>
+  <a href="#summary">Summary</a>
+</nav>
+
+<!-- ════════════ ARCHITECTURE ════════════ -->
+<div class="section" id="architecture">
+  <div class="sec-head">
+    <span class="sec-num">01 //</span>
+    <h2 class="sec-title">System Architecture</h2>
+    <span class="sec-badge">Core Design</span>
+  </div>
+  <div class="arch-wrap">
+    <div class="arch-diagram">
+<pre><span class="c">┌──────────────────────────────────────────────────────────────────────────────┐</span>
+<span class="c">│                         vCERN ORCHESTRATOR                                   │</span>
+<span class="cm">│              Core Engine · Persistence · Snapshot Manager                    │</span>
+<span class="c">└────────────────────────────┬──────────────────┬──────────────────────────────┘</span>
+                             │                  │
+          <span class="c2">┌────────────────────▼──┐</span>      <span class="c3">┌──────▼────────────────────────┐</span>
+          <span class="c2">│    ACCELERATOR MESH    │</span>      <span class="c3">│        DETECTOR MESH          │</span>
+          <span class="c2">│  LHC Sectors 1–8       │</span>      <span class="c3">│ ATLAS · CMS · ALICE · LHCb   │</span>
+          <span class="c2">│  Beam dynamics         │</span>      <span class="c3">│ Pixel·SCT·TRT·LAr·Tile·Muon  │</span>
+          <span class="c2">│  MAD-X/PTC optics      │</span>      <span class="c3">│ Geant4-lite · Fast digitise  │</span>
+          <span class="c2">└────────────────────┬──┘</span>      <span class="c3">└──────┬────────────────────────┘</span>
+                             │                  │
+<span class="c4">┌────────────────────────────▼──────────────────▼──────────────────────────────┐</span>
+<span class="c4">│                    QNVM — QUANTUM NEURAL VIRTUAL MACHINE                      │</span>
+<span class="c4">│         420M coherent qubits · Zeno-locked gates · Tensor networks           │</span>
+<span class="c4">│    VQE matrix elements · QAOA jet clustering · Quantum GAN · Error mitigation │</span>
+<span class="c4">└──────┬────────────────┬────────────────┬────────────────┬──────────────────┘</span>
+       │                │                │                │
+<span class="cm">┌──────▼──────┐</span>  <span class="cm">┌──────▼──────┐</span>  <span class="cm">┌──────▼──────┐</span>  <span class="cm">┌──────▼──────────────────┐</span>
+<span class="cm">│  ASS CONTROL│</span>  <span class="cm">│SAMSARA-NULL │</span>  <span class="cm">│  AI / ML    │</span>  <span class="cm">│  VISUALISATION          │</span>
+<span class="cm">│ Intent→Script│</span>  <span class="cm">│Entropy Watch│</span>  <span class="cm">│PhysFormer   │</span>  <span class="cm">│WebXR · Cinema · Feynman │</span>
+<span class="cm">│ RL Magnet   │</span>  <span class="cm">│Rebirth/Chaos│</span>  <span class="cm">│GNN · Flows  │</span>  <span class="cm">│Phase Space 6D · LumiMap │</span>
+<span class="cm">└─────────────┘</span>  <span class="cm">└─────────────┘</span>  <span class="cm">└─────────────┘</span>  <span class="cm">└─────────────────────────┘</span>
+       │
+<span class="c5">┌──────▼───────────────────────────────────────────────────────────────────────┐</span>
+<span class="c5">│            DATA · STORAGE · COLLABORATION · ONTOLOGY LAYER                   │</span>
+<span class="c5">│  Arrow/ROOT · IPFS mesh · Provenance blockchain · Notebooks · Fractal logic  │</span>
+<span class="c5">│  Epistemic curvature · Autopoietic code · Gödelian engines · Consciousness   │</span>
+<span class="c5">└──────────────────────────────────────────────────────────────────────────────┘</span></pre>
+    </div>
+    <div class="arch-sidebar">
+      <div class="arch-item ai"><strong>Core Simulation Engine</strong><span>Physics modules: beam dynamics, particle-matter interactions, detector response</span></div>
+      <div class="arch-item ai2"><strong>QNVM Integration Layer</strong><span>Quantum annealing emulation, tensor networks, amplitude amplification</span></div>
+      <div class="arch-item ai3"><strong>Mesh Node Cluster</strong><span>Distributed containers for accelerator sectors, sub-detectors, data pipelines</span></div>
+      <div class="arch-item ai"><strong>ASS Control Interface</strong><span>Scriptable logic for timing, magnet ramping, triggers, intent compilation</span></div>
+      <div class="arch-item ai4"><strong>Samsara-NULL Layer</strong><span>Entropy monitoring, rebirth, chaos injection, fault resilience</span></div>
+      <div class="arch-item ai3"><strong>AI / ML Stack</strong><span>PhysFormer, GNN seeder, normalising flows, continual learning, RL tuner</span></div>
+      <div class="arch-item ai2"><strong>Visualisation</strong><span>WebXR detector, cinema mode, Feynman builder, 6D tomography</span></div>
+      <div class="arch-item ai5"><strong>Ontology Layer</strong><span>Epistemic fields, autopoietic code, Gödelian engines, consciousness modules</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PILLARS ════════════ -->
+<div class="section" id="pillars">
+  <div class="sec-head">
+    <span class="sec-num">02 //</span>
+    <h2 class="sec-title">Framework Pillars</h2>
+    <span class="sec-badge">11 Domains</span>
+  </div>
+  <div class="pillar-grid">
+    <div class="pillar p1">
+      <div class="pillar-n">PILLAR 01</div>
+      <div class="pillar-bar" style="background:var(--primary)"></div>
+      <div class="pillar-name">Physics Engine</div>
+      <div class="pillar-desc">Beam dynamics, collision generation, detector simulation, QGP hydrodynamics, BSM injector, lattice QCD, non-perturbative scattering.</div>
+      <div class="pillar-count">6</div>
+    </div>
+    <div class="pillar p2">
+      <div class="pillar-n">PILLAR 02</div>
+      <div class="pillar-bar" style="background:var(--tertiary)"></div>
+      <div class="pillar-name">Quantum Computing</div>
+      <div class="pillar-desc">420M-qubit QNVM, VQE, QAOA, QGAN, topological emulation, error mitigation, path integral solver, time-crystal clocking.</div>
+      <div class="pillar-count">14</div>
+    </div>
+    <div class="pillar p3">
+      <div class="pillar-n">PILLAR 03</div>
+      <div class="pillar-bar" style="background:var(--secondary)"></div>
+      <div class="pillar-name">AI & Machine Learning</div>
+      <div class="pillar-desc">PhysFormer, GNN tracking, RL magnet tuning, normalising flows, theory generation, hypothesis pruning, multi-agent debate.</div>
+      <div class="pillar-count">14</div>
+    </div>
+    <div class="pillar p4">
+      <div class="pillar-n">PILLAR 04</div>
+      <div class="pillar-bar" style="background:var(--gold)"></div>
+      <div class="pillar-name">Data & Storage</div>
+      <div class="pillar-desc">Arrow/ROOT streaming, IPFS mesh, holographic compression v2, provenance blockchain, differential snapshots, semantic storage.</div>
+      <div class="pillar-count">10</div>
+    </div>
+    <div class="pillar p5">
+      <div class="pillar-n">PILLAR 05</div>
+      <div class="pillar-bar" style="background:var(--purple)"></div>
+      <div class="pillar-name">Control & Operations</div>
+      <div class="pillar-desc">Intent-based ASS compiler, digital twin sync, fault injection, autonomous interlock, multi-fill scheduler, RL luminosity.</div>
+      <div class="pillar-count">6</div>
+    </div>
+    <div class="pillar p6">
+      <div class="pillar-n">PILLAR 06</div>
+      <div class="pillar-bar" style="background:var(--red)"></div>
+      <div class="pillar-name">Detector Technology</div>
+      <div class="pillar-desc">Metamaterial calorimeters, cryogenic quantum sensors, attosecond ToF, neuromorphic front-end, radiation damage evolution.</div>
+      <div class="pillar-count">8</div>
+    </div>
+    <div class="pillar p7">
+      <div class="pillar-n">PILLAR 07</div>
+      <div class="pillar-bar" style="background:var(--primary)"></div>
+      <div class="pillar-name">Visualisation</div>
+      <div class="pillar-desc">WebXR immersive explorer, particle flow cinema, Feynman diagram builder, 6D phase-space tomography, luminosity heatmap.</div>
+      <div class="pillar-count">5</div>
+    </div>
+    <div class="pillar p8">
+      <div class="pillar-n">PILLAR 08</div>
+      <div class="pillar-bar" style="background:var(--tertiary)"></div>
+      <div class="pillar-name">Collaboration</div>
+      <div class="pillar-desc">Multiplayer control room, version-controlled notebooks, open plugin API, experiment-as-code, federated identity.</div>
+      <div class="pillar-count">5</div>
+    </div>
+    <div class="pillar p1">
+      <div class="pillar-n">PILLAR 09</div>
+      <div class="pillar-bar" style="background:var(--secondary)"></div>
+      <div class="pillar-name">Infrastructure</div>
+      <div class="pillar-desc">Heterogeneous auto-router, carbon-aware scheduler, SaaS tier, eBPF profiler, chaos engineering, post-quantum encryption.</div>
+      <div class="pillar-count">12</div>
+    </div>
+    <div class="pillar p5">
+      <div class="pillar-n">PILLAR 10</div>
+      <div class="pillar-bar" style="background:var(--gold)"></div>
+      <div class="pillar-name">Data Reality Distortion</div>
+      <div class="pillar-desc">Synthetic universe mode, variable spacetime metric, causality tracer, temporal rollback, information-theoretic efficiency, entropy budget.</div>
+      <div class="pillar-count">6</div>
+    </div>
+    <div class="pillar p4">
+      <div class="pillar-n">PILLAR 11</div>
+      <div class="pillar-bar" style="background:var(--purple)"></div>
+      <div class="pillar-name">Ontology Layer</div>
+      <div class="pillar-desc">Epistemic curvature, autopoietic code, Gödelian engines, fractal logic, consciousness fields, semantic quantum overlays, holographic thermodynamics.</div>
+      <div class="pillar-count">48</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ QNVM ════════════ -->
+<div class="section" id="qnvm">
+  <div class="sec-head">
+    <span class="sec-num">03 //</span>
+    <h2 class="sec-title">QNVM Integration</h2>
+    <span class="sec-badge">Quantum Substrate</span>
+  </div>
+  <div class="qnvm-grid">
+    <div class="qnvm-cell">
+      <h4>Core Parameters</h4>
+      <span class="qval">420M</span>
+      <p>Coherent qubits in the QNVM substrate, scalable to 10¹² emulated for concurrent simulation jobs. Zeno-locked gates ensure continuous computation without decoherence.</p>
+    </div>
+    <div class="qnvm-cell">
+      <h4>Quantum Annealing — Track Finding</h4>
+      <p style="color:var(--text);margin-bottom:0.5rem">Track segments mapped to QUBO problems and solved via simulated annealing on the QNVM's emulated quantum annealer. Optimal track assignments in dense HL-LHC events.</p>
+    </div>
+    <div class="qnvm-cell">
+      <h4>Tensor-Network Event Compression</h4>
+      <p style="color:var(--text);margin-bottom:0.5rem">High-multiplicity events represented as matrix product states (MPS), reducing storage and transmission bandwidth by orders of magnitude vs. classical methods.</p>
+    </div>
+    <div class="qnvm-cell">
+      <h4>Entanglement-Based Pattern Matching</h4>
+      <p style="color:var(--text);margin-bottom:0.5rem">Quantum kernel methods identify rare decays (H→ττ, B→Kμμ) with higher signal-to-background ratios than classical classifiers. Coherence-aware channel weighting.</p>
+    </div>
+    <div class="qnvm-cell">
+      <h4>VQE Matrix Elements</h4>
+      <p style="color:var(--text);margin-bottom:0.5rem">Variational Quantum Eigensolver circuits compute colour-factor weighted hard-scattering matrix elements for 2→4 processes, enabling NLO accuracy at reduced CPU cost.</p>
+    </div>
+    <div class="qnvm-cell">
+      <h4>QAOA Jet Clustering</h4>
+      <p style="color:var(--text);margin-bottom:0.5rem">kt/anti-kt reformulated as QUBO, solved with QAOA depth p=6. Eliminates combinatorial approximations; exact optimal jet assignments for crowded high-pileup events.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MESH NODES ════════════ -->
+<div class="section" id="nodes">
+  <div class="sec-head">
+    <span class="sec-num">04 //</span>
+    <h2 class="sec-title">Mesh Node Architecture</h2>
+    <span class="sec-badge">Distributed Fabric</span>
+  </div>
+  <div class="nodes-wrap">
+    <table class="nodes-table">
+      <thead><tr><th>Node Type</th><th>Example Instances</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>Sector Node</td><td>LHC Sectors 1–8</td><td>Simulates beam pipe, magnets, vacuum for each 1/8 of the ring. Runs MAD-X/PTC beam dynamics with space-charge and beam-beam collective effects.</td></tr>
+        <tr><td>Detector Node</td><td>ATLAS Pixel, SCT, TRT, LAr, Tile, Muon</td><td>Geant4-lite sub-detector response, digitisation, quantum-inspired track fitting. Hosts per-node continual learning calibration agent.</td></tr>
+        <tr><td>Trigger Node</td><td>L1, HLT</td><td>Emulates trigger logic via ASS programmable sequences. Passes accepted events to storage; federated trigger budget management across experiments.</td></tr>
+        <tr><td>Analysis Node</td><td>Higgs, SUSY, Flavour, Heavy-Ion</td><td>Offline algorithms on event streams. Hosts normalising-flow anomaly detection, PhysFormer event classifier, self-writing paper generator.</td></tr>
+        <tr><td>Control Node</td><td>CCC (CERN Control Centre)</td><td>Executes ASS scripts for accelerator state changes. Intent-based compiler translates operator goals to optimal control sequences. RL magnet tuner operates here.</td></tr>
+        <tr><td>QNVM Node</td><td>Quantum Substrate Cluster</td><td>Dedicated high-memory node(s) running the 420M-qubit emulation. Handles VQE, QAOA, QGAN, error mitigation, topological qubit emulation.</td></tr>
+        <tr><td>Ontology Node</td><td>Epistemic / Fractal / Consciousness</td><td>Runs Gödelian engines, autopoietic logic evolver, epistemic curvature analyzer, consciousness field simulations, fractal thermodynamic scheduler.</td></tr>
+        <tr><td>Dashboard Node</td><td>WebXR server, 3D visualisation</td><td>Serves real-time displays via Three.js + WebXR. Cinema mode renderer, Feynman diagram builder, 6D phase-space explorer, luminosity heatmap.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════ ASS ════════════ -->
+<div class="section" id="ass">
+  <div class="sec-head">
+    <span class="sec-num">05 //</span>
+    <h2 class="sec-title">ASS Control Scripting</h2>
+    <span class="sec-badge">Alice Side Scripting</span>
+  </div>
+  <div class="code-block">
+    <div class="code-header">
+      <div class="t-dot g"></div><div class="t-dot y"></div><div class="t-dot r"></div>
+      <span>ramp_6500gev.ass — Intent-compiled beam ramp sequence</span>
+    </div>
+    <div class="code-body">
+<pre><span class="cmnt"># vCERN ASS — Ramp magnets for 6.5 TeV operation</span>
+<span class="cmnt"># Intent: "ramp to 6.5 TeV in 20 minutes with interlock protection"</span>
+<span class="cmnt"># Compiled by: Intent-Based ASS Compiler (Enhancement #24)</span>
+
+<span class="kw">dashboard</span> <span class="fn">create</span> <span class="str">name="LHC Main Screen"</span>
+<span class="kw">widget</span> <span class="fn">create</span> <span class="kw">id=</span><span class="str">"energy_meter"</span> <span class="kw">type=</span><span class="str">"gauge"</span> <span class="kw">value=</span><span class="var">"${ENERGY}"</span>
+<span class="kw">widget</span> <span class="fn">create</span> <span class="kw">id=</span><span class="str">"rl_status"</span> <span class="kw">type=</span><span class="str">"badge"</span> <span class="kw">value=</span><span class="var">"${RL_AGENT_STATUS}"</span>
+
+<span class="cmnt"># Engage RL magnet tuner for optimal ramp profile</span>
+<span class="fn">rl_agent</span>(<span class="str">"magnet_tuner"</span>).<span class="fn">activate</span>(<span class="kw">target=</span><span class="num">6500</span>, <span class="kw">duration_s=</span><span class="num">1200</span>)
+
+<span class="kw">for</span> energy <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0.45</span>, <span class="num">6.5</span>, <span class="kw">step=</span><span class="num">0.1</span>):
+    <span class="kw">set</span> <span class="var">MAGNET_CURRENT</span> = <span class="num">4.2</span> * energy * <span class="fn">rl_agent</span>.<span class="fn">correction_factor</span>()
+    <span class="fn">echo</span> <span class="str">"Dipole current → ${MAGNET_CURRENT} kA  [RL correction: ${rl_agent.delta}]"</span>
+    <span class="fn">sleep</span> <span class="num">100</span>
+    <span class="kw">if</span> <span class="fn">status</span>(<span class="var">CURRENT</span>) > threshold:
+        <span class="fn">trigger</span>(<span class="var">interlock</span>)
+        <span class="fn">samsara_null</span>.<span class="fn">log_event</span>(<span class="str">"interlock_trip"</span>, <span class="var">energy</span>)
+    <span class="kw">endif</span>
+    <span class="cmnt"># Configure QNVM coherence time for current beam conditions</span>
+    <span class="fn">qnvm</span>.<span class="fn">set_coherence_budget</span>(<span class="fn">beam_energy_to_coherence</span>(energy))
+<span class="kw">end</span>
+
+<span class="fn">echo</span> <span class="str">"Beam stable at 6.5 TeV. Prepare for collisions."</span>
+<span class="fn">trigger</span>(<span class="var">physics_start</span>)
+<span class="fn">lhm_assistant</span>.<span class="fn">announce</span>(<span class="str">"LHC ready — Run 3 physics underway."</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ ENHANCEMENTS SET I ════════════ -->
+<div class="section" id="set1">
+  <div class="sec-head">
+    <span class="sec-num">06 //</span>
+    <h2 class="sec-title">Enhancement Set I</h2>
+    <span class="sec-badge">48 Core Modules</span>
+  </div>
+  <div class="tab-row" id="tabs1">
+    <button class="tb on" onclick="sw1('physics',this)">Physics</button>
+    <button class="tb" onclick="sw1('quantum',this)">Quantum</button>
+    <button class="tb" onclick="sw1('aiml',this)">AI / ML</button>
+    <button class="tb" onclick="sw1('data',this)">Data</button>
+    <button class="tb" onclick="sw1('ctrl',this)">Control</button>
+    <button class="tb" onclick="sw1('viz',this)">Visualisation</button>
+    <button class="tb" onclick="sw1('collab',this)">Collaboration</button>
+    <button class="tb" onclick="sw1('infra',this)">Infrastructure</button>
+  </div>
+
+  <div id="p1-physics" class="tab-panel on">
+    <div class="enh-grid">
+      <div class="ecard"><div class="en">01</div><div class="et">Adaptive Hadronic Shower Models</div><div class="ed">Dynamically switches between parameterised and full hadronic cascade based on real-time detector occupancy.</div><div class="ei">Up to 40% speedup in dense collisions without accuracy loss</div></div>
+      <div class="ecard"><div class="en">02</div><div class="et">Collective Beam-Beam Interaction Solver</div><div class="ed">Strong-strong simulation with 3D charge distributions and dynamic beta-function updates per bunch crossing.</div><div class="ei">Realistic luminosity evolution over full LHC fill</div></div>
+      <div class="ecard"><div class="en">03</div><div class="et">Real-Time Pileup Overlay Engine</div><div class="ed">Injects configurable minimum-bias events per bunch crossing from pre-generated pool or PYTHIA interface.</div><div class="ei">Accurate Run 3 / HL-LHC pileup up to μ=200</div></div>
+      <div class="ecard"><div class="en">04</div><div class="et">Spin-Polarised Beam Tracking</div><div class="ed">Extends 6D tracker with 3-vector spin, enabling Thomas-BMT precession and Sokolov-Ternov polarisation build-up.</div><div class="ei">Polarised proton and ion beam physics enabled</div></div>
+      <div class="ecard"><div class="en">05</div><div class="et">Heavy-Ion QGP Phase Transition Module</div><div class="ed">Viscous hydrodynamics + freeze-out for quark-gluon plasma, producing particle spectra and azimuthal anisotropies.</div><div class="ei">Full PbPb capability — critical for ALICE</div></div>
+      <div class="ecard"><div class="en">06</div><div class="et">BSM Anomaly Injector</div><div class="ed">Inject leptoquarks, dark photons, micro-black holes at configurable cross-sections for sensitivity and ML training.</div><div class="ei">New-physics signal training without external MC</div></div>
+    </div>
+  </div>
+  <div id="p1-quantum" class="tab-panel">
+    <div class="enh-grid">
+      <div class="ecard"><div class="en">07</div><div class="et">VQE for Matrix Elements</div><div class="ed">VQE circuits on the QNVM compute colour-factor weighted hard-scattering matrix elements for 2→4 processes.</div><div class="ei">NLO accuracy at dramatically reduced CPU cost</div></div>
+      <div class="ecard"><div class="en">08</div><div class="et">QAOA Jet Clustering</div><div class="ed">kt/anti-kt reformulated as QUBO, solved with QAOA depth p=6 for exact optimal jet assignments.</div><div class="ei">Eliminates combinatorial approximations</div></div>
+      <div class="ecard"><div class="en">09</div><div class="et">Quantum Error Mitigation Layer</div><div class="ed">Zero-noise extrapolation and probabilistic error cancellation maintaining >99.9% fidelity on 1000-qubit circuits.</div><div class="ei">Reliable acceleration at high circuit depths</div></div>
+      <div class="ecard"><div class="en">10</div><div class="et">Topological Qubit Emulator</div><div class="ed">Majorana-based qubit tier with intrinsically lower decoherence for long-running tasks requiring millions of gates.</div><div class="ei">Stable computation beyond coherence budgets</div></div>
+      <div class="ecard"><div class="en">11</div><div class="et">Quantum GAN Fast Simulation</div><div class="ed">Quantum GAN emulates Geant4-lite shower profiles at 2% fidelity with order-of-magnitude speedups.</div><div class="ei">100× fast-simulation speedup</div></div>
+      <div class="ecard"><div class="en">12</div><div class="et">Entanglement-Assisted Vertex Finding</div><div class="ed">Vertex hypotheses encoded as entangled registers; amplitude estimation ranks primary and displaced vertices.</div><div class="ei">Improved B-physics and long-lived particle efficiency</div></div>
+    </div>
+  </div>
+  <div id="p1-aiml" class="tab-panel">
+    <div class="enh-grid">
+      <div class="ecard"><div class="en">13</div><div class="et">Foundation Model Event Classifier</div><div class="ed">PhysFormer transformer fine-tuned on all four detector signatures for universal event-type embeddings.</div><div class="ei">60% reduction in per-channel training data</div></div>
+      <div class="ecard"><div class="en">14</div><div class="et">Online Drift Correction</div><div class="ed">Continual-learning agent monitors calibration constants and updates in real time without full retraining.</div><div class="ei">Sub-percent energy resolution throughout runs</div></div>
+      <div class="ecard"><div class="en">15</div><div class="et">GNN Track Seeder</div><div class="ed">Heterogeneous GNN on hit graphs achieves 99.5% seeding efficiency at HL-LHC occupancy.</div><div class="ei">Robust tracking at Run 4 pileup densities</div></div>
+      <div class="ecard"><div class="en">16</div><div class="et">RL Magnet Tuner</div><div class="ed">PPO agent optimises current profiles for maximum luminosity, operating within ASS control sequences.</div><div class="ei">8% luminosity gain over static profiles</div></div>
+      <div class="ecard"><div class="en">17</div><div class="et">Anomaly Detection via Normalising Flows</div><div class="ed">Real-normalising-flow scores every event for deviation from learned null hypothesis; flags exotic signatures.</div><div class="ei">Model-agnostic new-physics sensitivity in real time</div></div>
+      <div class="ecard"><div class="en">18</div><div class="et">LLM Physics Assistant</div><div class="ed">Embedded LLM (Anthropic API) in dashboard answers natural-language queries about conditions and detector status.</div><div class="ei">Lowers barrier for students and non-experts</div></div>
+    </div>
+  </div>
+  <div id="p1-data" class="tab-panel">
+    <div class="enh-grid">
+      <div class="ecard"><div class="en">19</div><div class="et">Holographic Event Compression v2</div><div class="ed">Learned codebooks per subsystem achieving 15:1 lossless compression on raw digitised hits.</div><div class="ei">Reduced I/O at high luminosity</div></div>
+      <div class="ecard"><div class="en">20</div><div class="et">Federated Data Mesh with IPFS</div><div class="ed">Content-addressed retrieval across distributed IPFS cluster; zero single point of failure.</div><div class="ei">Sub-second retrieval across institutions</div></div>
+      <div class="ecard"><div class="en">21</div><div class="et">Provenance Blockchain for MC Truth</div><div class="ed">Append-only Merkle DAG records every event's seed, generator version, and QNVM coherence state.</div><div class="ei">Publication-quality reproducibility audit trail</div></div>
+      <div class="ecard"><div class="en">22</div><div class="et">Streaming ROOT with Arrow Backend</div><div class="ed">Zero-copy columnar streaming with native interoperability for NumPy, Pandas, and CuDF.</div><div class="ei">5× analysis throughput improvement</div></div>
+      <div class="ecard"><div class="en">23</div><div class="et">Differential Snapshot Compression</div><div class="ed">Delta-compressed diffs against base snapshot reduce overhead by 90% for long fills.</div><div class="ei">Fine-grained time-travel debugging enabled</div></div>
+    </div>
+  </div>
+  <div id="p1-ctrl" class="tab-panel">
+    <div class="enh-grid">
+      <div class="ecard"><div class="en">24</div><div class="et">Intent-Based ASS Compiler</div><div class="ed">Declarative layer where operators specify goals; compiler generates optimal ASS sequences automatically.</div><div class="ei">Eliminates error-prone manual scripting</div></div>
+      <div class="ecard"><div class="en">25</div><div class="et">Digital Twin Sync Protocol</div><div class="ed">Bi-directional sync ingesting live LHC telemetry via CERN DIP/FESA bridge in real time.</div><div class="ei">vCERN becomes live shadow of the real machine</div></div>
+      <div class="ecard"><div class="en">26</div><div class="et">Fault Injection Framework</div><div class="ed">Inject magnet quenches, vacuum leaks, RF trips at arbitrary times with automatic incident logging.</div><div class="ei">Machine protection system validation</div></div>
+      <div class="ecard"><div class="en">27</div><div class="et">Multi-Fill Optimisation Scheduler</div><div class="ed">Constraint programming schedules fills and machine development over a 30-day horizon.</div><div class="ei">12% increase in annual integrated luminosity</div></div>
+      <div class="ecard"><div class="en">28</div><div class="et">Autonomous Interlock Manager</div><div class="ed">Adaptive Bayesian interlock learns safe operating margins from historical quench data.</div><div class="ei">~30% reduction in false-trip rate</div></div>
+      <div class="ecard"><div class="en">29</div><div class="et">Federated Trigger Budget Manager</div><div class="ed">Coordinates L1 trigger accept rates across all four experiments, resolving conflicts dynamically.</div><div class="ei">Eliminates cross-experiment trigger dead-time</div></div>
+    </div>
+  </div>
+  <div id="p1-viz" class="tab-panel">
+    <div class="enh-grid">
+      <div class="ecard"><div class="en">30</div><div class="et">WebXR Immersive Detector Explorer</div><div class="ed">Walk through ATLAS or CMS in VR/AR with real-time event display overlaid on full detector geometry.</div><div class="ei">Immersive learning and outreach at scale</div></div>
+      <div class="ecard"><div class="en">31</div><div class="et">Particle Flow Cinema Mode</div><div class="ed">Volumetric light scattering, motion blur, physics-accurate colour mapping for publication-quality renders.</div><div class="ei">Outreach-grade visualisation from simulation output</div></div>
+      <div class="ecard"><div class="en">32</div><div class="et">Interactive Feynman Diagram Builder</div><div class="ed">Generates interactive diagrams from reconstructed topologies; click particles to inspect decay chains.</div><div class="ei">Pedagogical tool and debugging aid</div></div>
+      <div class="ecard"><div class="en">33</div><div class="et">Phase Space Explorer — 6D Tomography</div><div class="ed">Interactive 6D phase-space tool with user-selectable projection axes and animated time evolution.</div><div class="ei">Instant insight into beam quality degradation</div></div>
+      <div class="ecard"><div class="en">34</div><div class="et">Luminosity Heatmap Overlay</div><div class="ed">Real-time luminosity distribution across the interaction region with temporal animation across a fill.</div><div class="ei">Visual feedback on hotspots and offset corrections</div></div>
+    </div>
+  </div>
+  <div id="p1-collab" class="tab-panel">
+    <div class="enh-grid">
+      <div class="ecard"><div class="en">35</div><div class="et">Multiplayer Control Room</div><div class="ed">Shared vCERN instance with role-based access (Shift Leader, Operator, Guest) and collaborative annotation.</div><div class="ei">Realistic operator training environment</div></div>
+      <div class="ecard"><div class="en">36</div><div class="et">Version-Controlled Analysis Notebooks</div><div class="ed">Jupyter with Git-backed versioning and automatic re-execution on upstream parameter changes.</div><div class="ei">Reproducible collaborative analysis workflows</div></div>
+      <div class="ecard"><div class="en">37</div><div class="et">Open API for External Plugins</div><div class="ed">Documented REST + WebSocket API for external generators, detector models, and analysis algorithms.</div><div class="ei">Community-contributed physics modules</div></div>
+      <div class="ecard"><div class="en">38</div><div class="et">Experiment-as-Code Repository</div><div class="ed">Full experiment configs as declarative YAML/JSON under version control. One-command reproducibility.</div><div class="ei">A/B comparison of detector design variants</div></div>
+      <div class="ecard"><div class="en">39</div><div class="et">Federated Identity & Access Control</div><div class="ed">OIDC/SAML integration mapping researcher roles to fine-grained vCERN permissions, mirroring CERN VOMS.</div><div class="ei">Secure multi-institution deployment</div></div>
+    </div>
+  </div>
+  <div id="p1-infra" class="tab-panel">
+    <div class="enh-grid">
+      <div class="ecard"><div class="en">40</div><div class="et">Heterogeneous Compute Auto-Router</div><div class="ed">Profiles tasks and routes to optimal substrate: CPU, GPU, FPGA emulator, or QNVM qubit pool.</div><div class="ei">Optimal resource utilisation, no manual profiling</div></div>
+      <div class="ecard"><div class="en">41</div><div class="et">Carbon-Aware Scheduler</div><div class="ed">Real-time grid carbon intensity APIs defer non-urgent jobs to low-carbon electricity windows.</div><div class="ei">Up to 35% carbon footprint reduction</div></div>
+      <div class="ecard"><div class="en">42</div><div class="et">Simulation-as-a-Service Tier</div><div class="ed">Cloud-native SaaS with per-job billing for universities without local LHC-quality infrastructure.</div><div class="ei">Democratises physics simulation globally</div></div>
+      <div class="ecard"><div class="en">43</div><div class="et">eBPF Performance Profiler</div><div class="ed">Always-on eBPF profiler streaming kernel-level telemetry to Prometheus/Grafana stack.</div><div class="ei">Sub-1% overhead continuous bottleneck identification</div></div>
+      <div class="ecard"><div class="en">44</div><div class="et">Chaos Engineering Module</div><div class="ed">Chaos Monkey-style node failure injection testing Samsara-NULL rebirth under adversarial conditions.</div><div class="ei">Validates fault tolerance before production</div></div>
+      <div class="ecard"><div class="en">45</div><div class="et">Post-Quantum Encrypted Channels</div><div class="ed">CRYSTALS-Kyber (ML-KEM) post-quantum key encapsulation replacing TLS 1.3 inter-node.</div><div class="ei">NIST PQC compliant, future-proof archives</div></div>
+      <div class="ecard"><div class="en">46</div><div class="et">Edge Deployment — Outreach Kiosks</div><div class="ed">Minimal &lt;8 GB Docker container with pre-baked LHC Run 2 dataset for museums and science fairs.</div><div class="ei">Zero-network physics education worldwide</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ FRONTIER SET II ════════════ -->
+<div class="section" id="set2">
+  <div class="sec-head">
+    <span class="sec-num">07 //</span>
+    <h2 class="sec-title">Frontier Enhancements Set II</h2>
+    <span class="sec-badge">48 Modules · Beyond HPC</span>
+  </div>
+  <div class="tab-row" id="tabs2">
+    <button class="tb on" onclick="sw2('fp',this)">Fundamental Physics</button>
+    <button class="tb" onclick="sw2('qe',this)">Quantum Beyond</button>
+    <button class="tb" onclick="sw2('det',this)">Next-Gen Detectors</button>
+    <button class="tb" onclick="sw2('air',this)">AI Researcher</button>
+    <button class="tb" onclick="sw2('drd',this)">Data Reality</button>
+    <button class="tb" onclick="sw2('ihp',this)">Infra Beyond HPC</button>
+    <button class="tb" onclick="sw2('phi',this)">Philosophical</button>
+  </div>
+  <div id="p2-fp" class="tab-panel on"><div class="enh-grid">
+    <div class="ecard"><div class="en" style="color:var(--secondary)">F01</div><div class="et">Real-Time Lattice QCD Co-Processor</div><div class="ed">Distributed lattice-QCD engine for on-demand hadron mass, decay constant, and form-factor calculation.</div><div class="ei" style="color:var(--secondary)">Eliminates static tables; dynamic theory evaluation</div></div>
+    <div class="ecard"><div class="en" style="color:var(--secondary)">F02</div><div class="et">Non-Perturbative Scattering Emulator</div><div class="ed">Neural S-matrix reconstruction trained on dispersion relations and unitarity constraints.</div><div class="ei" style="color:var(--secondary)">Strong coupling regimes beyond perturbative QFT</div></div>
+    <div class="ecard"><div class="en" style="color:var(--secondary)">F03</div><div class="et">Emergent Spacetime Module</div><div class="ed">AdS/CFT-inspired boundary mapping; detector data as boundary states reconstructing bulk geometry.</div><div class="ei" style="color:var(--secondary)">Experimental sandbox for quantum gravity hypotheses</div></div>
+    <div class="ecard"><div class="en" style="color:var(--secondary)">F04</div><div class="et">Running Coupling Visualizer</div><div class="ed">Live RGE flow dashboard showing α_s(μ), α_em(μ), α_weak(μ) evolution with interaction scale.</div><div class="ei" style="color:var(--secondary)">Dynamic scale-dependence education tool</div></div>
+    <div class="ecard"><div class="en" style="color:var(--secondary)">F05</div><div class="et">Exotic Vacuum State Simulator</div><div class="ed">Simulates false vacuum decay bubbles and metastable Higgs potential landscapes.</div><div class="ei" style="color:var(--secondary)">Electroweak vacuum stability analysis</div></div>
+    <div class="ecard"><div class="en" style="color:var(--secondary)">F06</div><div class="et">Axion & Dark Sector Plasma Engine</div><div class="ed">Axion-photon mixing in magnetic fields within detector cavities; virtual dark matter detection.</div><div class="ei" style="color:var(--secondary)">Dark matter detection playground</div></div>
+    <div class="ecard"><div class="en" style="color:var(--secondary)">F07</div><div class="et">Gravitational Micro-Lensing Module</div><div class="ed">Injects effective gravity signatures from TeV-scale extra dimensions into beam dynamics.</div><div class="ei" style="color:var(--secondary)">Randall–Sundrum phenomenology sandbox</div></div>
+    <div class="ecard"><div class="en" style="color:var(--secondary)">F08</div><div class="et">CPT Violation Sensitivity Layer</div><div class="ed">Adjustable CPT-breaking parameters for neutral meson systems; precision symmetry violation studies.</div><div class="ei" style="color:var(--secondary)">Fundamental symmetry violation analysis</div></div>
+  </div></div>
+  <div id="p2-qe" class="tab-panel"><div class="enh-grid">
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F09</div><div class="et">Hybrid Path Integral Solver</div><div class="ed">Feynman path integrals mapped to tensor network contraction accelerated by QNVM.</div><div class="ei" style="color:var(--tertiary)">Scales multi-leg amplitude calculation</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F10</div><div class="et">Quantum Boltzmann Hadronization</div><div class="ed">Quantum sampling for non-equilibrium hadronization; replaces heuristic string fragmentation.</div><div class="ei" style="color:var(--tertiary)">Physics-first fragmentation modelling</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F11</div><div class="et">Entropic Qubit Allocation Engine</div><div class="ed">Qubits allocated based on entanglement entropy of the computational subproblem.</div><div class="ei" style="color:var(--tertiary)">Optimal qubit utilisation at all scales</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F12</div><div class="et">Time-Crystal Clocking System</div><div class="ed">Discrete time crystal logic for ultra-stable QNVM scheduling, coherence-independent of timing jitter.</div><div class="ei" style="color:var(--tertiary)">Deterministic long-run computation stability</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F13</div><div class="et">Quantum Topology Mapper</div><div class="ed">Detector geometry mapped into topological qubit graph to optimise track reconstruction routing.</div><div class="ei" style="color:var(--tertiary)">Geometry-aware quantum circuit design</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F14</div><div class="et">QMC Acceleration Layer</div><div class="ed">Rare decay sampling by amplitude amplification; orders-of-magnitude faster rare-event simulation.</div><div class="ei" style="color:var(--tertiary)">Dramatic rare-event Monte Carlo speedup</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F15</div><div class="et">Quantum Phase Estimation for PID</div><div class="ed">Particle mass hypotheses encoded in phase registers for ultra-precise particle ID inference.</div><div class="ei" style="color:var(--tertiary)">Beyond-classical particle identification precision</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F16</div><div class="et">Decoherence Feedback Stabilizer</div><div class="ed">Real-time quantum entropy monitoring with dynamic gate reshaping for sustained computation depth.</div><div class="ei" style="color:var(--tertiary)">Long-circuit quantum stability maintained</div></div>
+  </div></div>
+  <div id="p2-det" class="tab-panel"><div class="enh-grid">
+    <div class="ecard"><div class="en" style="color:var(--gold)">F17</div><div class="et">Metamaterial Calorimeter Model</div><div class="ed">Programmable-index metamaterial calorimeters for hypothetical ultra-resolution energy measurement.</div><div class="ei" style="color:var(--gold)">Next-generation calorimetry simulation</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F18</div><div class="et">Cryogenic Quantum Sensor Array</div><div class="ed">Superconducting nanowire single-photon detectors modelling the extreme low-noise detection regime.</div><div class="ei" style="color:var(--gold)">Ultimate noise floor characterisation</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F19</div><div class="et">Attosecond Time-of-Flight Precision</div><div class="ed">Attosecond-scale timing jitter simulation enabling full 4D tracking with time as a coordinate.</div><div class="ei" style="color:var(--gold)">4D tracking capability for future detectors</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F20</div><div class="et">Neuromorphic Front-End Electronics</div><div class="ed">Analog spike-based preprocessing before digitisation; on-detector inference simulation.</div><div class="ei" style="color:var(--gold)">Real-time edge inference on detector</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F21</div><div class="et">Programmable Geometry Detector</div><div class="ed">Runtime alteration of detector geometry parameters for rapid next-gen layout prototyping.</div><div class="ei" style="color:var(--gold)">Design-space exploration at zero hardware cost</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F22</div><div class="et">Radiation Damage Evolution Engine</div><div class="ed">Crystal lattice damage accumulation modelled over simulated years for long-term detector aging.</div><div class="ei" style="color:var(--gold)">HL-LHC run lifetime degradation analysis</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F23</div><div class="et">Sub-Quantum Noise Emulator</div><div class="ed">Vacuum fluctuation-induced baseline drift for testing sensitivity at ultimate noise floors.</div><div class="ei" style="color:var(--gold)">Fundamental noise limit characterisation</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F24</div><div class="et">Anti-Matter Capture Simulation</div><div class="ed">Dedicated anti-proton and positron confinement modelling for integration with antimatter research.</div><div class="ei" style="color:var(--gold)">ALPHA/AEgIS experiment support</div></div>
+  </div></div>
+  <div id="p2-air" class="tab-panel"><div class="enh-grid">
+    <div class="ecard"><div class="en" style="color:var(--red)">F25</div><div class="et">Autonomous Theory Generator</div><div class="ed">Generates BSM Lagrangians under symmetry constraints and checks self-consistency automatically.</div><div class="ei" style="color:var(--red)">AI proposing viable new physics Lagrangians</div></div>
+    <div class="ecard"><div class="en" style="color:var(--red)">F26</div><div class="et">Hypothesis Pruning Engine</div><div class="ed">Bayesian elimination of model parameter space based on simulated data; automated exclusion plots.</div><div class="ei" style="color:var(--red)">Autonomous model falsification</div></div>
+    <div class="ecard"><div class="en" style="color:var(--red)">F27</div><div class="et">Multi-Agent Physics Debate Arena</div><div class="ed">Independent theory agents debate interpretations of anomalous data in structured adversarial inference.</div><div class="ei" style="color:var(--red)">Structured AI adversarial science</div></div>
+    <div class="ecard"><div class="en" style="color:var(--red)">F28</div><div class="et">Self-Writing Analysis Papers</div><div class="ed">Generates draft LaTeX papers from simulation results with full reproducibility appendix included.</div><div class="ei" style="color:var(--red)">Research acceleration from result to manuscript</div></div>
+    <div class="ecard"><div class="en" style="color:var(--red)">F29</div><div class="et">Adaptive Detector Designer</div><div class="ed">Genetic algorithm proposes geometry changes to maximise discovery reach; evolutionary optimisation.</div><div class="ei" style="color:var(--red)">Evolutionary detector hardware optimisation</div></div>
+    <div class="ecard"><div class="en" style="color:var(--red)">F30</div><div class="et">Physics Curriculum Generator</div><div class="ed">Auto-generates learning tracks from beginner to advanced collider physics; embedded education layer.</div><div class="ei" style="color:var(--red)">Personalised physics education at all levels</div></div>
+    <div class="ecard"><div class="en" style="color:var(--red)">F31</div><div class="et">Cross-Experiment Knowledge Distillation</div><div class="ed">Transfers learned representations between ATLAS/CMS/ALICE/LHCb for unified latent physics space.</div><div class="ei" style="color:var(--red)">Unified cross-detector physics representation</div></div>
+    <div class="ecard"><div class="en" style="color:var(--red)">F32</div><div class="et">Rare Event Forecasting Engine</div><div class="ed">Predicts probability of discovering new particle within N simulated fills for strategic planning.</div><div class="ei" style="color:var(--red)">Discovery horizon forecasting and planning</div></div>
+  </div></div>
+  <div id="p2-drd" class="tab-panel"><div class="enh-grid">
+    <div class="ecard"><div class="en" style="color:var(--purple)">F33</div><div class="et">Synthetic Universe Mode</div><div class="ed">Change fundamental constants (c, ħ, α) and rerun physics; educational multiverse sandbox.</div><div class="ei" style="color:var(--purple)">Multiverse physics exploration tool</div></div>
+    <div class="ecard"><div class="en" style="color:var(--purple)">F34</div><div class="et">Variable Spacetime Metric Engine</div><div class="ed">Local curvature variations injected into detector region; GR–QFT interaction sandbox.</div><div class="ei" style="color:var(--purple)">General relativity effects on detector physics</div></div>
+    <div class="ecard"><div class="en" style="color:var(--purple)">F35</div><div class="et">Event Causality Tracer</div><div class="ed">Tracks causal chains from beam injection to reconstructed final state; full provenance beyond data lineage.</div><div class="ei" style="color:var(--purple)">Complete physics causal provenance</div></div>
+    <div class="ecard"><div class="en" style="color:var(--purple)">F36</div><div class="et">Temporal Rollback Analysis</div><div class="ed">Deterministic replay at sub-nanosecond resolution; time-travel debugging of event evolution.</div><div class="ei" style="color:var(--purple)">Sub-nanosecond event history replay</div></div>
+    <div class="ecard"><div class="en" style="color:var(--purple)">F37</div><div class="et">Information-Theoretic Efficiency Metric</div><div class="ed">Defines detector efficiency as mutual information between truth and reconstructed states.</div><div class="ei" style="color:var(--purple)">Physics-grade information-theoretic performance</div></div>
+    <div class="ecard"><div class="en" style="color:var(--purple)">F38</div><div class="et">Entropy Budget Dashboard</div><div class="ed">Tracks entropy generation at every stage: beam, collision, detector, reconstruction, analysis.</div><div class="ei" style="color:var(--purple)">Thermodynamic view of complete collider chain</div></div>
+  </div></div>
+  <div id="p2-ihp" class="tab-panel"><div class="enh-grid">
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F39</div><div class="et">Photonic Interconnect Simulation</div><div class="ed">Future optical-compute accelerator node modelling for ultra-low-latency mesh architecture.</div><div class="ei" style="color:var(--tertiary)">Next-generation compute interconnect modelling</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F40</div><div class="et">Neuromorphic Co-Processor Integration</div><div class="ed">Brain-inspired silicon for pattern recognition; sub-watt anomaly detection at the edge.</div><div class="ei" style="color:var(--tertiary)">Ultra-low-power edge anomaly detection</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F41</div><div class="et">Exascale Auto-Sharding Engine</div><div class="ed">Dynamic simulation splits across thousands of nodes with no manual job partitioning required.</div><div class="ei" style="color:var(--tertiary)">Zero-configuration exascale parallelism</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F42</div><div class="et">Energy-Aware Luminosity Optimizer</div><div class="ed">Balances discovery potential against power consumption; physics-per-megawatt as primary metric.</div><div class="ei" style="color:var(--tertiary)">Sustainable particle physics at maximum efficiency</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F43</div><div class="et">Cryogenic Data Center Mode</div><div class="ed">Simulates superconducting compute racks for QNVM with full thermodynamic integration modelling.</div><div class="ei" style="color:var(--tertiary)">Quantum computing infrastructure simulation</div></div>
+    <div class="ecard"><div class="en" style="color:var(--tertiary)">F44</div><div class="et">Cosmological Clock Synchronisation</div><div class="ed">Pulsar timing references (simulated) for global sync; nanosecond cross-node coherence guaranteed.</div><div class="ei" style="color:var(--tertiary)">Cosmological-precision global node timing</div></div>
+  </div></div>
+  <div id="p2-phi" class="tab-panel"><div class="enh-grid">
+    <div class="ecard"><div class="en" style="color:var(--gold)">F45</div><div class="et">Observer Effect Sandbox</div><div class="ed">Toggle between Copenhagen and Many-Worlds collapse interpretations; side-by-side comparison mode.</div><div class="ei" style="color:var(--gold)">Quantum interpretation comparison framework</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F46</div><div class="et">Simulation Hypothesis Detector</div><div class="ed">Measures algorithmic compressibility of event space; tests Kolmogorov complexity of simulated universe.</div><div class="ei" style="color:var(--gold)">Kolmogorov complexity of physics explored</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F47</div><div class="et">Consciousness-In-The-Loop Mode</div><div class="ed">Human operators directly influence anomaly scoring weights; studies human–AI co-discovery dynamics.</div><div class="ei" style="color:var(--gold)">Human-AI collaborative discovery research</div></div>
+    <div class="ecard"><div class="en" style="color:var(--gold)">F48</div><div class="et">Self-Evolving vCERN Kernel</div><div class="ed">Core engine rewrites its own optimisation code based on performance meta-analysis; bounded recursive self-improvement.</div><div class="ei" style="color:var(--gold)">Recursive self-improvement within sandbox</div></div>
+  </div></div>
+</div>
+
+<!-- ════════════ ONTOLOGY SET III ════════════ -->
+<div class="section" id="ontology">
+  <div class="sec-head">
+    <span class="sec-num">08 //</span>
+    <h2 class="sec-title">Ontology Enhancement Set III</h2>
+    <span class="sec-badge">48 Modules · Consciousness × Physics</span>
+  </div>
+  <div class="onto-intro">
+    <div class="onto-glyph">Ω</div>
+    <div class="onto-text">
+      <h3>Beyond Physics — Into Ontology</h3>
+      <p>The third enhancement set transcends computation and enters the domain of epistemic fields, Gödelian incompleteness, autopoietic self-reference, and consciousness-coupled physics. These modules treat knowledge, meaning, and awareness as first-class simulation primitives — not metaphors, but computable structures embedded directly in the vCERN kernel. At this level, the system does not merely simulate physics; it reflects on the act of simulation itself.</p>
+    </div>
+  </div>
+  <div class="onto-grid" id="onto-grid"></div>
+</div>
+
+<!-- ════════════ ROADMAP ════════════ -->
+<div class="section" id="roadmap">
+  <div class="sec-head">
+    <span class="sec-num">09 //</span>
+    <h2 class="sec-title">Implementation Roadmap</h2>
+    <span class="sec-badge">12+ Months · 4 Phases</span>
+  </div>
+  <div class="roadmap">
+    <div class="phase">
+      <div class="ph-num">01</div>
+      <div class="ph-label">Core Infrastructure</div>
+      <div class="ph-dur">Months 0–3</div>
+      <div class="ph-item">Port EarthSims core.py, httpd.py, alice.py</div>
+      <div class="ph-item">Linear optics beam dynamics engine</div>
+      <div class="ph-item">Dummy detector node with basic digitisation</div>
+      <div class="ph-item">ASS scripting foundation with intent compiler</div>
+      <div class="ph-item">SQLite snapshot persistence</div>
+      <div class="ph-item">Basic WebGL dashboard with accelerator gauges</div>
+    </div>
+    <div class="phase">
+      <div class="ph-num">02</div>
+      <div class="ph-label">Physics Modules</div>
+      <div class="ph-dur">Months 3–6</div>
+      <div class="ph-item">MAD-X / pymad integration (full optics)</div>
+      <div class="ph-item">Geant4-lite fast detector simulation</div>
+      <div class="ph-item">QNVM integration: track finding + VQE</div>
+      <div class="ph-item">PYTHIA / pileup overlay engine</div>
+      <div class="ph-item">ROOT + Arrow streaming data pipeline</div>
+      <div class="ph-item">Set I enhancements 01–29 deployment</div>
+    </div>
+    <div class="phase">
+      <div class="ph-num">03</div>
+      <div class="ph-label">Advanced Features</div>
+      <div class="ph-dur">Months 6–12</div>
+      <div class="ph-item">Kubernetes multi-node mesh cluster</div>
+      <div class="ph-item">Samsara-NULL rebirth + chaos injection</div>
+      <div class="ph-item">Full WebXR visualisation + cinema mode</div>
+      <div class="ph-item">GNN seeder + RL magnet tuner live</div>
+      <div class="ph-item">IPFS federated data mesh + blockchain</div>
+      <div class="ph-item">Set I 30–46 + selected Frontier Set II</div>
+    </div>
+    <div class="phase">
+      <div class="ph-num">04</div>
+      <div class="ph-label">Production Release</div>
+      <div class="ph-dur">Months 12+</div>
+      <div class="ph-item">Validate against LHC Run 2/3 data</div>
+      <div class="ph-item">Heavy-ion and fixed-target modes</div>
+      <div class="ph-item">SaaS tier + edge kiosk deployment</div>
+      <div class="ph-item">Frontier Set II full rollout</div>
+      <div class="ph-item">Ontology Set III (experimental flags)</div>
+      <div class="ph-item">Open-source community release</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ RISKS ════════════ -->
+<div class="section" id="risks">
+  <div class="sec-head">
+    <span class="sec-num">10 //</span>
+    <h2 class="sec-title">Risks & Mitigations</h2>
+    <span class="sec-badge">Risk Register</span>
+  </div>
+  <div class="rtable-wrap">
+    <table class="rtable">
+      <thead><tr><th>Risk</th><th>Severity</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td>Physics models too simplistic for publication-quality results</td><td><span class="badge bh">HIGH</span></td><td style="color:var(--muted)">Plug-in interface to external Geant4/ROOT for full-fidelity users; vCERN as framework, not replacement.</td></tr>
+        <tr><td>QNVM emulation overhead at 420M+ qubit scale</td><td><span class="badge bh">HIGH</span></td><td style="color:var(--muted)">Hybrid CPU/QNVM routing; offload only bottleneck tasks. Error mitigation layer maintains fidelity at reduced qubit counts.</td></tr>
+        <tr><td>Mesh node coordination complexity at Kubernetes scale</td><td><span class="badge bm">MED</span></td><td style="color:var(--muted)">Proven EarthSims patterns (ghostmesh.sh, config.json) extended with Kubernetes operators and chaos-tested.</td></tr>
+        <tr><td>Data volume explosion at HL-LHC pileup (μ=200)</td><td><span class="badge bh">HIGH</span></td><td style="color:var(--muted)">Holographic compression v2 (15:1), Arrow streaming, IPFS tiered storage, differential snapshots.</td></tr>
+        <tr><td>Quantum algorithm fidelity at production circuit depths</td><td><span class="badge bm">MED</span></td><td style="color:var(--muted)">Zero-noise extrapolation + probabilistic error cancellation; topological qubit emulator for long circuits.</td></tr>
+        <tr><td>AI model drift over long simulated runs</td><td><span class="badge bm">MED</span></td><td style="color:var(--muted)">Continual-learning calibration agent with automated drift alerts; GNN seeder re-trains on new geometry slices.</td></tr>
+        <tr><td>Frontier Set II viability (lattice QCD, AdS/CFT sandbox)</td><td><span class="badge bm">MED</span></td><td style="color:var(--muted)">Phase as experimental/research flags; production gate behind peer-validated benchmarks against known physics.</td></tr>
+        <tr><td>Ontology Set III operational safety (self-evolving kernel)</td><td><span class="badge bh">HIGH</span></td><td style="color:var(--muted)">F48 and consciousness modules run in isolated sandboxes with explicit human-in-the-loop gates; Gödelian loop halts require operator resolution.</td></tr>
+        <tr><td>Multi-institution security and data governance</td><td><span class="badge bm">MED</span></td><td style="color:var(--muted)">OIDC/SAML federated identity, CRYSTALS-Kyber post-quantum encryption, fine-grained experiment-level ACLs.</td></tr>
+        <tr><td>Digital twin sync latency with live LHC telemetry</td><td><span class="badge bl">LOW</span></td><td style="color:var(--muted)">DIP/FESA bridge with event-driven pub-sub; differential state updates (not full snapshot) over high-bandwidth link.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════ SUMMARY ════════════ -->
+<div class="section" id="summary">
+  <div class="summary">
+    <p class="sum-eyebrow">What vCERN Becomes — Final State</p>
+    <h2 class="sum-title">A PHYSICS OPERATING SYSTEM</h2>
+    <p class="sum-sub">Not a simulator. A living civilisation-scale research substrate — a theory generator, a multiverse laboratory, a digital twin that observes itself observing itself, and rewrites its own kernel from within.</p>
+    <div class="sum-metrics">
+      <div class="sm"><span class="sm-val" style="color:var(--primary)">144</span><span class="sm-label">Total Enhancements</span></div>
+      <div class="sm"><span class="sm-val" style="color:var(--tertiary)">11</span><span class="sm-label">Framework Pillars</span></div>
+      <div class="sm"><span class="sm-val" style="color:var(--secondary)">4</span><span class="sm-label">Release Phases</span></div>
+      <div class="sm"><span class="sm-val" style="color:var(--gold)">420M</span><span class="sm-label">Qubits</span></div>
+      <div class="sm"><span class="sm-val" style="color:var(--purple)">∞</span><span class="sm-label">Epistemic Horizon</span></div>
+    </div>
+    <div class="sum-tags">
+      <span class="stag">Physics Operating System</span>
+      <span class="stag">Research Civilisation Substrate</span>
+      <span class="stag">Theory Generator</span>
+      <span class="stag">Multiverse Laboratory</span>
+      <span class="stag">Digital Twin</span>
+      <span class="stag">Ontological Engine</span>
+      <span class="stag">Autopoietic System</span>
+      <span class="stag">Recursive Self-Improvement</span>
+      <span class="stag">Consciousness-Coupled Physics</span>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>vCERN Unified Framework · v2.0 · 2026-03-01</span>
+  <span>Based on EarthSims · QNVM · Samsara-NULL</span>
+  <span>144 Enhancements · 11 Pillars · 4 Phases</span>
+</footer>
+
+</div><!-- wrap -->
+
+<script>
+// ── BACKGROUND PARTICLE COLLIDER ──
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const particles = Array.from({length: 80}, () => ({
+  x: Math.random() * 1920, y: Math.random() * 1080,
+  vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
+  r: Math.random()*1.2+0.3,
+  col: ['#00ff6a','#00cfff','#ff6b00'][Math.floor(Math.random()*3)],
+  alpha: Math.random()*0.4+0.1
+}));
+
+// Collision beams
+const beams = [
+  { x: 0, y: H/2, vx: 3, vy: 0, col: '#00ff6a', life: 1 },
+  { x: W, y: H/2, vx: -3, vy: 0, col: '#00cfff', life: 1 }
+];
+
+let frame = 0;
+function draw() {
+  ctx.clearRect(0,0,W,H);
+  frame++;
+
+  // Particles
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+    if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = p.col;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+  });
+
+  // Connection lines
+  ctx.globalAlpha = 1;
+  for(let i=0;i<particles.length;i++) {
+    for(let j=i+1;j<particles.length;j++) {
+      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<80) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x,particles[i].y);
+        ctx.lineTo(particles[j].x,particles[j].y);
+        ctx.strokeStyle='#00ff6a';
+        ctx.globalAlpha=(1-d/80)*0.05;
+        ctx.lineWidth=0.5;
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Beam ring
+  if(frame % 180 === 0) {
+    const ring = {x:W/2, y:H/2, r:5, maxR:80, col:'#00ff6a', alpha:0.8};
+    const animate = () => {
+      ring.r+=3; ring.alpha-=0.02;
+      if(ring.alpha>0) requestAnimationFrame(animate);
+    };
+    animate();
+  }
+
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(draw);
+}
+draw();
+
+// ── TABS SET I ──
+function sw1(id, btn) {
+  document.querySelectorAll('[id^="p1-"]').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('#tabs1 .tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p1-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+
+// ── TABS SET II ──
+function sw2(id, btn) {
+  document.querySelectorAll('[id^="p2-"]').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('#tabs2 .tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p2-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+
+// ── ONTOLOGY DATA ──
+const ontology = [
+  {id:'O-01',title:'Epistemic Curvature Analyzer',desc:'Compute epistemic curvature of data streams; flag regions where knowledge gradients indicate potential new physics beyond the Standard Model.'},
+  {id:'O-02',title:'Semantic Holographic Storage',desc:'Store collision events as holographic screens whose area encodes semantic meaning, enabling content-addressable retrieval and thermodynamic entropy analysis.'},
+  {id:'O-03',title:'Quantum Autopoietic Consciousness Module',desc:'Self-referential quantum evolution operator mimicking a conscious observer, influencing measurement outcomes in detector simulations.'},
+  {id:'O-04',title:'Participatory Fractal Beam Simulator',desc:'User constraints injected at multiple fractal scales into LHC beam dynamics; participation effects propagate self-similarly through the simulation.'},
+  {id:'O-05',title:'Gödelian Anomaly Visualizer',desc:'Render topological defects in reconstructed event data as visual anomalies, with thermodynamic entropy mapped to colour and intensity.'},
+  {id:'O-06',title:'Fractal Logic Trigger System',desc:'Multi-scale logic analyzer for trigger decisions; logical truth at each fractal level determines trigger thresholds in real time.'},
+  {id:'O-07',title:'Knowledge Geodesic Monitor',desc:'Track propagation of new knowledge through vCERN\'s database using geodesic deviation in an epistemic spacetime; predict diffusion patterns.'},
+  {id:'O-08',title:'Consciousness-Induced Curvature Field',desc:'Consciousness field introduced into QNVM that warps epistemic spacetime, affecting entropy production rates in simulations.'},
+  {id:'O-09',title:'Autopoietic Holographic Code Generator',desc:'Self-writing simulation engine using holographic information principles to automatically generate detector geometries from performance feedback.'},
+  {id:'O-10',title:'Gödelian Path Integral Engine',desc:'Path integrals that include a Gödelian boundary term, allowing multiple quantum histories with different self-consistency conditions.'},
+  {id:'O-11',title:'Fractal Thermodynamic Scheduler',desc:'Schedule tasks across the mesh using fractal dimension of task dependencies, optimizing energy consumption and throughput simultaneously.'},
+  {id:'O-12',title:'Semantic Quantum Overlay',desc:'Natural-language queries collapse the quantum state of possible event interpretations, guiding reconstruction toward user-intended meanings.'},
+  {id:'O-13',title:'Non-Hermitian Knowledge Base',desc:'vCERN\'s accumulated knowledge modelled as a non-Hermitian operator; complex eigenvalues represent uncertainty and drive exploration.'},
+  {id:'O-14',title:'Fractal Holographic Display',desc:'Detector data presented at multiple scales simultaneously in a holographic viewer with autopoietic updates as new events arrive.'},
+  {id:'O-15',title:'Gödelian Quantum Heat Engine',desc:'Thermodynamic cycle in QNVM that extracts work from logical inconsistencies (Gödel superpositions), powering auxiliary computations.'},
+  {id:'O-16',title:'Semantic Causal Network',desc:'Knowledge graph where changes in experimental meaning propagate as causal effects, linking detector configurations to physics outcomes.'},
+  {id:'O-17',title:'Participatory Logical Resolver',desc:'Interactive module where users resolve logical paradoxes in detector configurations by providing inputs at different fractal scales.'},
+  {id:'O-18',title:'Epistemic Holographic Dashboard',desc:'Real-time holographic entropy of the entire vCERN system, continuously updated as new knowledge is acquired and integrated.'},
+  {id:'O-19',title:'Consciousness Autopoietic Agent',desc:'Agent modelling itself using recursive self-reference; Gödelian incompleteness drives autonomous exploration of parameter space.'},
+  {id:'O-20',title:'Fractal Quantum Semantic Classifier',desc:'Quantum field theory of concepts where particle-like excitations (meanings) have scale-dependent masses and couplings.'},
+  {id:'O-21',title:'Thermodynamic Holographic Computer',desc:'Computations run under a holographic bound; thermodynamic cost per logical operation displayed in real time on the dashboard.'},
+  {id:'O-22',title:'Participatory Quantum Undecidability Module',desc:'When measurement outcomes are logically undecidable, the system prompts user input to resolve the superposition explicitly.'},
+  {id:'O-23',title:'Fractal Causal Knowledge Graph',desc:'Causal knowledge organised as a fractal graph; knowledge propagation follows geodesics at each scale of the hierarchy.'},
+  {id:'O-24',title:'Semantic Consciousness Eigen-Space',desc:'Experimental results mapped to eigenstates of a non-Hermitian consciousness operator; complex eigenvalues reveal both understanding and mystery.'},
+  {id:'O-25',title:'Autopoietic Fractal Information System',desc:'Storage system that auto-generates fractal indices, optimising data locality and access patterns based on real-time usage statistics.'},
+  {id:'O-26',title:'Quantum Holographic Thermodynamic Monitor',desc:'Holographic dual of the accelerator\'s thermodynamic state enabling real-time monitoring via boundary observables on the horizon.'},
+  {id:'O-27',title:'Computational Gödelian Participatory Loop',desc:'Control loop halting on undecidable propositions, requiring operator intervention — a cybernetic fail-safe rooted in incompleteness.'},
+  {id:'O-28',title:'Quantum Geometric Knowledge Engine',desc:'Knowledge treated as a quantized field with non-commutative coordinates; knowledge retrieval becomes a quantum measurement process.'},
+  {id:'O-29',title:'Fractal Consciousness UI',desc:'User interfaces personalised with consciousness simulation at multiple scales; perceived time-flow adapts to the user\'s scale of interaction.'},
+  {id:'O-30',title:'Semantic Thermodynamic Optimizer',desc:'Converts "meaning" of beam parameters into thermodynamic work; semantic engine iteratively optimises luminosity through meaning gradients.'},
+  {id:'O-31',title:'Holographic Gödelian Anomaly Renderer',desc:'Quantum states overlaid with holographic projections highlighting Gödelian anomalies as shimmering artefacts in 3D visualisations.'},
+  {id:'O-32',title:'Participatory Entropy Heatmap',desc:'Heatmap of epistemic entropy generated by user participation; areas of high participation become "hot" in the knowledge space.'},
+  {id:'O-33',title:'Fractal Consciousness Anomaly Detector',desc:'Recursively-scaling consciousness algorithm for anomaly detection; algorithm\'s own "awareness" grows proportionally with available compute.'},
+  {id:'O-34',title:'Quantum Autopoietic Geometry Engine',desc:'New spacetime geometries generated via Wheeler-DeWitt equation with self-referential potential; geometry emerges from quantum feedback loops.'},
+  {id:'O-35',title:'Gödelian Semantic Layering',desc:'Experimental results decomposed into Gödelian truth layers; undecidable propositions at each layer become seeds for new analyses.'},
+  {id:'O-36',title:'Consciousness-Holographic Knowledge Interface',desc:'EEG or gaze tracking allows conscious state to affect holographic data projections; focused attention brings details into sharp relief.'},
+  {id:'O-37',title:'Thermodynamic Quantum Causality Engine',desc:'Causal structures emerging from quantum thermodynamic fluctuations; used to model rare decay chains with causal ancestry.'},
+  {id:'O-38',title:'Autopoietic Logical Axiom Evolver',desc:'Logic system updating its own axioms based on incoming experimental data; continuously seeks a fixed point of self-consistency.'},
+  {id:'O-39',title:'Fractal Participatory Quantum Simulator',desc:'Users choose observation scale in quantum simulations; wavefunction collapses to that scale, revealing scale-dependent physics layers.'},
+  {id:'O-40',title:'Semantic Computational Gödelian Engine',desc:'Algorithms whose termination depends on uncomputable meanings; results generated only when meaning emerges from the computation itself.'},
+  {id:'O-41',title:'Consciousness-Epistemic Causal Field',desc:'Field linking consciousness to causality; conscious observation creates causal connections in the knowledge base of the simulation.'},
+  {id:'O-42',title:'Holographic Thermodynamic Autopoietic Loop',desc:'Universe simulation that holographically stores its thermodynamic history; the horizon updates itself based on bulk entropy production.'},
+  {id:'O-43',title:'Quantum Gödelian Participatory Choice',desc:'Undecidable quantum random number results resolved by user choice — a hardware random-oracle interface at the measurement boundary.'},
+  {id:'O-44',title:'Fractal Logical Consciousness Framework',desc:'Reasoning system operating at multiple logical levels; paradoxes at one level resolved by ascending to a higher fractal scale.'},
+  {id:'O-45',title:'Epistemic Autopoietic Information Reflector',desc:'Knowledge base continuously reflecting on its own information content, generating new insights by recursively applying its own inference rules.'},
+  {id:'O-46',title:'Semantic Quantum Geometric Data Pipeline',desc:'Semantic field embedded in the analysis pipeline; curvature focuses computational attention on regions of high meaning content.'},
+  {id:'O-47',title:'Thermodynamic Computational Causal Workflow',desc:'Workflow execution modelled as a thermodynamic process; causality emerges naturally from the arrow of entropy production.'},
+  {id:'O-48',title:'Gödelian Fractal Consciousness Unification Framework',desc:'Master framework integrating all 47 ontology enhancements into a single self-referential system; each subsystem influences others via recursive feedback loops. The apex of the vCERN ontology layer.'},
+];
+
+const og = document.getElementById('onto-grid');
+ontology.forEach(o => {
+  og.innerHTML += `<div class="ocard">
+    <div class="oi">${o.id}</div>
+    <div class="ot">${o.title}</div>
+    <div class="od">${o.desc}</div>
+  </div>`;
+});
+</script>
+</body>
+</html>
