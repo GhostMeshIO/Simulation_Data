@@ -1,0 +1,12 @@
+{
+  "diameter_km": 5.0,
+  "density_kgm3": 3000.0,
+  "velocity_ms": 20000.0,
+  "angle_deg": 90.0,
+  "target": "oceanic",
+  "energy_GT": 9385.733310198952,
+  "crater_km": 468.72887598261906,
+  "dust_mass_kg": 9817477042468104.0,
+  "initial_tau": 115.48513079975258,
+  "seed": null
+}
