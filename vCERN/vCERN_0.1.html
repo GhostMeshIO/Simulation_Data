@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vCERN — Unified Framework v1.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --void: #03040a;
+    --deep: #080c18;
+    --panel: #0d1225;
+    --border: #1a2545;
+    --accent: #00e5ff;
+    --accent2: #ff3b6b;
+    --accent3: #b8ff57;
+    --gold: #ffd447;
+    --muted: #4a5980;
+    --text: #c8d8f0;
+    --bright: #eaf2ff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--void);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* PARTICLE CANVAS */
+  #particle-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  .content-wrapper { position: relative; z-index: 2; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .hero-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    animation: spin linear infinite;
+  }
+  .ring1 { width: 600px; height: 600px; border-color: rgba(0,229,255,0.06); animation-duration: 40s; }
+  .ring2 { width: 450px; height: 450px; border-color: rgba(255,59,107,0.08); animation-duration: 28s; animation-direction: reverse; }
+  .ring3 { width: 300px; height: 300px; border-color: rgba(184,255,87,0.07); animation-duration: 18s; }
+
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(6rem, 18vw, 14rem);
+    letter-spacing: 0.05em;
+    line-height: 0.9;
+    color: var(--bright);
+    animation: fadeUp 0.8s ease 0.1s both;
+    position: relative;
+  }
+
+  .hero-title span {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--accent);
+  }
+
+  .hero-subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-top: 1rem;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .hero-desc {
+    max-width: 600px;
+    margin: 2.5rem auto 0;
+    font-size: 1.05rem;
+    color: var(--text);
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 3rem;
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
+
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(3,4,10,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    padding: 1rem 1.5rem 1rem 0;
+    border-right: 1px solid var(--border);
+    margin-right: 1rem;
+    white-space: nowrap;
+  }
+
+  nav a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 1.1rem 1rem;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── SECTION ── */
+  section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: 0.05em;
+    color: var(--bright);
+  }
+
+  .section-tag {
+    margin-left: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+    padding: 0.25rem 0.6rem;
+  }
+
+  /* ── ARCHITECTURE DIAGRAM ── */
+  .arch-diagram {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 2.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.9;
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+  }
+  .arch-diagram::before {
+    content: 'SYSTEM ARCHITECTURE';
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+  }
+  .arch-highlight { color: var(--accent); }
+  .arch-dim { color: var(--muted); }
+  .arch-green { color: var(--accent3); }
+  .arch-red { color: var(--accent2); }
+
+  /* ── PILLAR GRID ── */
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .pillar {
+    background: var(--deep);
+    padding: 2rem;
+    transition: background 0.3s;
+    cursor: default;
+  }
+  .pillar:hover { background: var(--panel); }
+
+  .pillar-id {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .pillar-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    color: var(--bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .pillar-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .pillar-accent { display: block; width: 24px; height: 2px; margin-bottom: 1rem; }
+
+  /* ── ENHANCEMENT TABS ── */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    margin-bottom: 0;
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--deep);
+    color: var(--muted);
+    border: none;
+    border-right: 1px solid var(--border);
+    padding: 0.85rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn:hover { color: var(--text); background: var(--panel); }
+  .tab-btn.active { color: var(--accent); background: var(--panel); border-bottom: 2px solid var(--accent); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .enh-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .enh-card {
+    background: var(--deep);
+    padding: 1.5rem;
+    transition: background 0.25s;
+  }
+  .enh-card:hover { background: var(--panel); }
+
+  .enh-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--border);
+    margin-bottom: 0.5rem;
+    transition: color 0.25s;
+  }
+  .enh-card:hover .enh-num { color: var(--accent); }
+
+  .enh-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .enh-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .enh-impact {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent3);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── ROADMAP ── */
+  .roadmap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .phase {
+    background: var(--deep);
+    padding: 2rem;
+  }
+
+  .phase-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--border);
+    margin-bottom: 0.5rem;
+  }
+
+  .phase-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+  }
+
+  .phase-duration {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-item {
+    font-size: 0.8rem;
+    color: var(--text);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(26,37,69,0.5);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .phase-item::before {
+    content: '→';
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+  }
+
+  /* ── RISK TABLE ── */
+  .risk-table { width: 100%; border-collapse: collapse; }
+  .risk-table th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .risk-table td {
+    padding: 1rem 1.5rem;
+    font-size: 0.82rem;
+    border-bottom: 1px solid rgba(26,37,69,0.5);
+    vertical-align: top;
+  }
+  .risk-table tr:last-child td { border-bottom: none; }
+  .risk-table tr:hover td { background: var(--panel); }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    padding: 0.2rem 0.5rem;
+    text-transform: uppercase;
+  }
+  .badge-high { background: rgba(255,59,107,0.15); color: var(--accent2); border: 1px solid var(--accent2); }
+  .badge-med { background: rgba(255,212,71,0.1); color: var(--gold); border: 1px solid var(--gold); }
+  .badge-low { background: rgba(184,255,87,0.1); color: var(--accent3); border: 1px solid var(--accent3); }
+
+  /* ── FRONTIER ── */
+  .frontier-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .frontier-card {
+    background: var(--deep);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s;
+  }
+  .frontier-card:hover { background: var(--panel); }
+  .frontier-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .frontier-card:hover::after { opacity: 1; }
+
+  .frontier-id {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    margin-bottom: 0.75rem;
+  }
+
+  .frontier-title {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .frontier-desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── SUMMARY BLOCK ── */
+  .summary-block {
+    border: 1px solid var(--border);
+    padding: 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: var(--panel);
+  }
+  .summary-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(0,229,255,0.05), transparent 70%);
+    pointer-events: none;
+  }
+
+  .summary-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    color: var(--bright);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-metrics {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    margin: 3rem 0;
+    flex-wrap: wrap;
+  }
+
+  .metric { text-align: center; }
+  .metric-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    display: block;
+    line-height: 1;
+  }
+  .metric-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+
+  .summary-tags {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  .summary-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .roadmap { grid-template-columns: 1fr 1fr; }
+    .hero-stats { gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
+    .summary-metrics { gap: 2rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+  @media (max-width: 500px) {
+    .roadmap { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<canvas id="particle-bg"></canvas>
+
+<div class="content-wrapper">
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-ring ring1"></div>
+  <div class="hero-ring ring2"></div>
+  <div class="hero-ring ring3"></div>
+  <p class="hero-eyebrow">Unified Framework Document · Version 1.0 · 2026</p>
+  <h1 class="hero-title">v<span>CERN</span></h1>
+  <p class="hero-subtitle">Virtual Re-creation of CERN — Quantum-Enhanced Particle Physics Platform</p>
+  <p class="hero-desc">A living digital twin of the world's most complex particle physics laboratory, fusing classical accelerator physics with quantum-inspired computation, autonomous intelligence, and frontier experimental infrastructure.</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">96</span><span class="stat-label">Total Enhancements</span></div>
+    <div class="stat"><span class="stat-num">420M</span><span class="stat-label">Qubit Substrate</span></div>
+    <div class="stat"><span class="stat-num">4</span><span class="stat-label">Major Detectors</span></div>
+    <div class="stat"><span class="stat-num">8</span><span class="stat-label">Framework Pillars</span></div>
+  </div>
+</div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">vCERN</div>
+  <a href="#architecture">Architecture</a>
+  <a href="#pillars">Pillars</a>
+  <a href="#enhancements">Enhancements I</a>
+  <a href="#frontier">Frontier II</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#risks">Risks</a>
+  <a href="#summary">Summary</a>
+</nav>
+
+<!-- ── ARCHITECTURE ── -->
+<section id="architecture">
+  <div class="section-header">
+    <span class="section-num">01 //</span>
+    <h2 class="section-title">System Architecture</h2>
+    <span class="section-tag">Core Design</span>
+  </div>
+
+  <div class="arch-diagram">
+<pre>
+  ┌────────────────────────────────────────────────────────────────────────────┐
+  │                     <span class="arch-highlight">vCERN ORCHESTRATOR</span>                                     │
+  │            Core Engine · Persistence · Snapshot Manager                   │
+  └────────────────────────────┬──────────────┬──────────────────────────────┘
+                               │              │
+             ┌─────────────────▼──┐      ┌────▼─────────────────┐
+             │  <span class="arch-green">ACCELERATOR MESH</span>   │      │   <span class="arch-green">DETECTOR MESH</span>      │
+             │  LHC Sectors 1–8   │      │  ATLAS · CMS · ALICE │
+             │  Beam Dynamics     │      │  LHCb · Sub-detectors│
+             └─────────────────┬──┘      └────┬─────────────────┘
+                               │              │
+  ┌────────────────────────────▼──────────────▼────────────────────────────────┐
+  │                    <span class="arch-highlight">QNVM — QUANTUM SUBSTRATE</span>                               │
+  │      420M qubit coherent engine · Zeno-locked gates · Tensor networks     │
+  │      VQE matrix elements · QAOA jet clustering · Quantum GAN fast-sim     │
+  └─────────────────────────────────────────────────────────────────────────────┘
+             │              │              │               │
+  ┌──────────▼───┐  ┌───────▼──────┐  ┌───▼──────────┐  ┌▼─────────────────┐
+  │ <span class="arch-red">ASS CONTROL</span>  │  │ <span class="arch-red">SAMSARA-NULL</span> │  │  <span class="arch-red">AI / ML LAYER</span> │  │ <span class="arch-red">VISUALISATION</span>   │
+  │ Intent→Script│  │ Entropy/Rebirth│  │ PhysFormer·GNN│  │ WebXR · Cinema  │
+  │ RL Magnet    │  │ Chaos Testing  │  │ Flow Anomaly  │  │ Feynman Builder │
+  └──────────────┘  └──────────────┘  └───────────────┘  └─────────────────┘
+             │
+  ┌──────────▼───────────────────────────────────────────────────────────────┐
+  │                  <span class="arch-dim">DATA · STORAGE · COLLABORATION</span>                          │
+  │   Arrow/ROOT streaming · IPFS mesh · Provenance blockchain · Notebooks   │
+  └──────────────────────────────────────────────────────────────────────────┘
+</pre>
+  </div>
+</section>
+
+<!-- ── PILLARS ── -->
+<section id="pillars">
+  <div class="section-header">
+    <span class="section-num">02 //</span>
+    <h2 class="section-title">Framework Pillars</h2>
+    <span class="section-tag">8 Domains</span>
+  </div>
+
+  <div class="pillar-grid">
+    <div class="pillar">
+      <div class="pillar-id">PILLAR 01</div>
+      <span class="pillar-accent" style="background:var(--accent)"></span>
+      <div class="pillar-name">Physics Engine</div>
+      <div class="pillar-desc">Beam dynamics, collision generation, detector simulation, QGP hydrodynamics, BSM injector. From linear optics to lattice QCD co-processing.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-id">PILLAR 02</div>
+      <span class="pillar-accent" style="background:var(--accent2)"></span>
+      <div class="pillar-name">Quantum Computing</div>
+      <div class="pillar-desc">420M-qubit QNVM substrate. VQE, QAOA, quantum GAN, topological qubit emulation, error mitigation, entanglement-based vertex finding.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-id">PILLAR 03</div>
+      <span class="pillar-accent" style="background:var(--accent3)"></span>
+      <div class="pillar-name">AI & Machine Learning</div>
+      <div class="pillar-desc">Foundation model event classification, GNN tracking, RL magnet tuning, normalising flow anomaly detection, autonomous theory generation.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-id">PILLAR 04</div>
+      <span class="pillar-accent" style="background:var(--gold)"></span>
+      <div class="pillar-name">Data & Storage</div>
+      <div class="pillar-desc">Arrow/ROOT streaming, IPFS federated mesh, holographic compression v2, provenance blockchain, differential snapshot compression.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-id">PILLAR 05</div>
+      <span class="pillar-accent" style="background:var(--accent)"></span>
+      <div class="pillar-name">Control & Operations</div>
+      <div class="pillar-desc">Intent-based ASS compiler, digital twin sync protocol, fault injection, autonomous interlock manager, multi-fill optimisation scheduler.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-id">PILLAR 06</div>
+      <span class="pillar-accent" style="background:var(--accent2)"></span>
+      <div class="pillar-name">Visualisation</div>
+      <div class="pillar-desc">WebXR immersive detector explorer, particle flow cinema mode, interactive Feynman diagram builder, 6D phase-space tomography.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-id">PILLAR 07</div>
+      <span class="pillar-accent" style="background:var(--accent3)"></span>
+      <div class="pillar-name">Collaboration</div>
+      <div class="pillar-desc">Multiplayer experiment control room, version-controlled analysis notebooks, open plugin API, experiment-as-code, federated identity.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-id">PILLAR 08</div>
+      <span class="pillar-accent" style="background:var(--gold)"></span>
+      <div class="pillar-name">Infrastructure</div>
+      <div class="pillar-desc">Heterogeneous compute auto-router, carbon-aware scheduler, eBPF profiler, chaos engineering, post-quantum encrypted channels, edge kiosk deployment.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ENHANCEMENTS SET I ── -->
+<section id="enhancements">
+  <div class="section-header">
+    <span class="section-num">03 //</span>
+    <h2 class="section-title">Enhancements Set I</h2>
+    <span class="section-tag">48 Modules</span>
+  </div>
+
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab-btn active" onclick="showTab('physics')">Physics</button>
+    <button class="tab-btn" onclick="showTab('quantum')">Quantum</button>
+    <button class="tab-btn" onclick="showTab('ai')">AI / ML</button>
+    <button class="tab-btn" onclick="showTab('data')">Data</button>
+    <button class="tab-btn" onclick="showTab('control')">Control</button>
+    <button class="tab-btn" onclick="showTab('viz')">Visualisation</button>
+    <button class="tab-btn" onclick="showTab('collab')">Collaboration</button>
+    <button class="tab-btn" onclick="showTab('infra')">Infrastructure</button>
+  </div>
+
+  <!-- PHYSICS TAB -->
+  <div id="tab-physics" class="tab-content active">
+    <div class="enh-grid">
+      <div class="enh-card"><div class="enh-num">01</div><div class="enh-title">Adaptive Hadronic Shower Models</div><div class="enh-desc">Dynamically switches between parameterised and full hadronic cascade based on real-time detector occupancy.</div><div class="enh-impact">↑ 40% speedup in dense collisions</div></div>
+      <div class="enh-card"><div class="enh-num">02</div><div class="enh-title">Collective Beam-Beam Interaction Solver</div><div class="enh-desc">Strong-strong beam-beam simulation with 3D charge distributions and dynamic beta-function updates per bunch crossing.</div><div class="enh-impact">↑ Realistic luminosity evolution over full fill</div></div>
+      <div class="enh-card"><div class="enh-num">03</div><div class="enh-title">Real-Time Pileup Overlay Engine</div><div class="enh-desc">Injects configurable minimum-bias events per bunch crossing, up to μ=200 for HL-LHC conditions.</div><div class="enh-impact">↑ Accurate Run 3 / HL-LHC simulation</div></div>
+      <div class="enh-card"><div class="enh-num">04</div><div class="enh-title">Spin-Polarised Beam Tracking</div><div class="enh-desc">Extends 6D tracker with 3-vector spin, enabling Thomas-BMT precession and Sokolov-Ternov polarisation build-up.</div><div class="enh-impact">↑ Polarised proton and ion beam studies</div></div>
+      <div class="enh-card"><div class="enh-num">05</div><div class="enh-title">Heavy-Ion QGP Phase Transition Module</div><div class="enh-desc">Viscous hydro + freeze-out for quark-gluon plasma, producing particle spectra and azimuthal anisotropies.</div><div class="enh-impact">↑ Full PbPb physics for ALICE</div></div>
+      <div class="enh-card"><div class="enh-num">06</div><div class="enh-title">Beyond-Standard-Model Anomaly Injector</div><div class="enh-desc">Injects exotic BSM signatures (leptoquarks, dark photons, micro-black holes) at configurable cross-sections.</div><div class="enh-impact">↑ ML training on new-physics signals</div></div>
+    </div>
+  </div>
+
+  <!-- QUANTUM TAB -->
+  <div id="tab-quantum" class="tab-content">
+    <div class="enh-grid">
+      <div class="enh-card"><div class="enh-num">07</div><div class="enh-title">VQE for Matrix Elements</div><div class="enh-desc">VQE circuits on the QNVM compute colour-factor weighted hard-scattering matrix elements for 2→4 processes.</div><div class="enh-impact">↑ NLO accuracy at reduced CPU cost</div></div>
+      <div class="enh-card"><div class="enh-num">08</div><div class="enh-title">QAOA Jet Clustering</div><div class="enh-desc">Reformulates kt/anti-kt as a QUBO and solves with QAOA depth p=6, yielding exact optimal jet assignments.</div><div class="enh-impact">↑ Eliminates combinatorial approximations</div></div>
+      <div class="enh-card"><div class="enh-num">09</div><div class="enh-title">Quantum Error Mitigation Layer</div><div class="enh-desc">Zero-noise extrapolation and probabilistic error cancellation maintaining >99.9% fidelity on 1000-qubit circuits.</div><div class="enh-impact">↑ Reliable acceleration at high circuit depth</div></div>
+      <div class="enh-card"><div class="enh-num">10</div><div class="enh-title">Topological Qubit Emulator</div><div class="enh-desc">Majorana-based qubit tier with intrinsically lower decoherence for long-running reconstruction tasks.</div><div class="enh-impact">↑ Stable computation beyond coherence budgets</div></div>
+      <div class="enh-card"><div class="enh-num">11</div><div class="enh-title">Quantum GAN Fast Simulation</div><div class="enh-desc">Quantum GAN emulates Geant4-lite shower profiles with 2% fidelity — orders of magnitude faster.</div><div class="enh-impact">↑ 100× fast-simulation speedup</div></div>
+      <div class="enh-card"><div class="enh-num">12</div><div class="enh-title">Entanglement-Assisted Vertex Finding</div><div class="enh-desc">Encodes vertex hypotheses as entangled registers; amplitude estimation ranks vertex candidates.</div><div class="enh-impact">↑ Improved displaced-vertex efficiency</div></div>
+    </div>
+  </div>
+
+  <!-- AI TAB -->
+  <div id="tab-ai" class="tab-content">
+    <div class="enh-grid">
+      <div class="enh-card"><div class="enh-num">13</div><div class="enh-title">Foundation Model Event Classifier</div><div class="enh-desc">PhysFormer transformer fine-tuned on all four major detector signatures for universal event-type embeddings.</div><div class="enh-impact">↑ 60% reduction in per-channel training data</div></div>
+      <div class="enh-card"><div class="enh-num">14</div><div class="enh-title">Online Drift Correction via Continual Learning</div><div class="enh-desc">Continual-learning agent monitors calibration constants and updates in real time without full retraining.</div><div class="enh-impact">↑ Sub-percent energy resolution throughout runs</div></div>
+      <div class="enh-card"><div class="enh-num">15</div><div class="enh-title">GNN Track Seeder</div><div class="enh-desc">Heterogeneous GNN operating on hit graphs achieves 99.5% seeding efficiency at HL-LHC occupancy.</div><div class="enh-impact">↑ Robust tracking at Run 4 pileup</div></div>
+      <div class="enh-card"><div class="enh-num">16</div><div class="enh-title">RL Magnet Tuner</div><div class="enh-desc">PPO agent optimises magnet current profiles for maximum luminosity, operating within ASS control sequences.</div><div class="enh-impact">↑ 8% luminosity gain over static profiles</div></div>
+      <div class="enh-card"><div class="enh-num">17</div><div class="enh-title">Anomaly Detection via Normalising Flows</div><div class="enh-desc">Real-normalising-flow model scores every event for deviation from the learned null hypothesis.</div><div class="enh-impact">↑ Model-agnostic new-physics sensitivity</div></div>
+      <div class="enh-card"><div class="enh-num">18</div><div class="enh-title">LLM Physics Assistant</div><div class="enh-desc">Embedded LLM (via Anthropic API) answers natural-language queries about running conditions and detector status.</div><div class="enh-impact">↑ Lowers barrier for students and non-experts</div></div>
+    </div>
+  </div>
+
+  <!-- DATA TAB -->
+  <div id="tab-data" class="tab-content">
+    <div class="enh-grid">
+      <div class="enh-card"><div class="enh-num">19</div><div class="enh-title">Holographic Event Compression v2</div><div class="enh-desc">Learned codebooks per detector subsystem achieving 15:1 lossless compression on raw digitised hits.</div><div class="enh-impact">↑ Reduced I/O at high luminosity</div></div>
+      <div class="enh-card"><div class="enh-num">20</div><div class="enh-title">Federated Data Mesh with IPFS</div><div class="enh-desc">Content-addressed retrieval across distributed IPFS cluster with zero single point of failure.</div><div class="enh-impact">↑ Sub-second retrieval across institutions</div></div>
+      <div class="enh-card"><div class="enh-num">21</div><div class="enh-title">Provenance Blockchain for MC Truth</div><div class="enh-desc">Append-only Merkle DAG records every event's seed, generator version, and QNVM coherence state.</div><div class="enh-impact">↑ Publication-quality reproducibility</div></div>
+      <div class="enh-card"><div class="enh-num">22</div><div class="enh-title">Streaming ROOT with Arrow Backend</div><div class="enh-desc">Zero-copy columnar streaming enabling native interoperability with NumPy, Pandas, and CuDF.</div><div class="enh-impact">↑ 5× analysis throughput</div></div>
+      <div class="enh-card"><div class="enh-num">23</div><div class="enh-title">Differential Snapshot Compression</div><div class="enh-desc">Delta-compressed diffs against a base snapshot reduce overhead by 90% for long fills.</div><div class="enh-impact">↑ Fine-grained time-travel debugging</div></div>
+    </div>
+  </div>
+
+  <!-- CONTROL TAB -->
+  <div id="tab-control" class="tab-content">
+    <div class="enh-grid">
+      <div class="enh-card"><div class="enh-num">24</div><div class="enh-title">Intent-Based ASS Compiler</div><div class="enh-desc">Declarative layer above ASS where operators specify goals; compiler generates optimal ASS sequences.</div><div class="enh-impact">↑ Eliminates error-prone manual scripting</div></div>
+      <div class="enh-card"><div class="enh-num">25</div><div class="enh-title">Digital Twin Synchronisation Protocol</div><div class="enh-desc">Bi-directional sync ingesting live LHC telemetry via CERN's DIP/FESA bridge in real time.</div><div class="enh-impact">↑ vCERN becomes live shadow of real LHC</div></div>
+      <div class="enh-card"><div class="enh-num">26</div><div class="enh-title">Fault Injection Framework</div><div class="enh-desc">Inject magnet quenches, vacuum leaks, RF trips at arbitrary times with automatic incident logging.</div><div class="enh-impact">↑ Machine protection system validation</div></div>
+      <div class="enh-card"><div class="enh-num">27</div><div class="enh-title">Multi-Fill Optimisation Scheduler</div><div class="enh-desc">Constraint programming schedules fills and machine development over a 30-day horizon.</div><div class="enh-impact">↑ 12% increase in annual integrated luminosity</div></div>
+      <div class="enh-card"><div class="enh-num">28</div><div class="enh-title">Autonomous Interlock Manager</div><div class="enh-desc">Adaptive Bayesian interlock learning safe operating margins from historical quench data.</div><div class="enh-impact">↑ ~30% reduction in false-trip rate</div></div>
+      <div class="enh-card"><div class="enh-num">29</div><div class="enh-title">Federated Trigger Budget Manager</div><div class="enh-desc">Coordinates L1 trigger accept rates across all four experiments, resolving conflicts dynamically.</div><div class="enh-impact">↑ Eliminates trigger dead-time conflicts</div></div>
+    </div>
+  </div>
+
+  <!-- VIZ TAB -->
+  <div id="tab-viz" class="tab-content">
+    <div class="enh-grid">
+      <div class="enh-card"><div class="enh-num">30</div><div class="enh-title">WebXR Immersive Detector Explorer</div><div class="enh-desc">Walk through ATLAS or CMS in VR/AR with real-time event display overlaid on geometry.</div><div class="enh-impact">↑ Immersive learning and outreach</div></div>
+      <div class="enh-card"><div class="enh-num">31</div><div class="enh-title">Particle Flow Cinema Mode</div><div class="enh-desc">Volumetric light scattering, motion blur, and physics-accurate colour mapping for outreach-quality renders.</div><div class="enh-impact">↑ Publication-quality visualisations</div></div>
+      <div class="enh-card"><div class="enh-num">32</div><div class="enh-title">Interactive Feynman Diagram Builder</div><div class="enh-desc">Generates interactive Feynman diagrams from reconstructed topologies; click particles to inspect decay chains.</div><div class="enh-impact">↑ Pedagogical and debugging tool</div></div>
+      <div class="enh-card"><div class="enh-num">33</div><div class="enh-title">Phase Space Explorer with 6D Tomography</div><div class="enh-desc">Interactive 6D phase-space visualisation with user-selectable projection axes and animated time evolution.</div><div class="enh-impact">↑ Instant insight into beam quality degradation</div></div>
+      <div class="enh-card"><div class="enh-num">34</div><div class="enh-title">Luminosity Heatmap Overlay</div><div class="enh-desc">Real-time luminosity distribution across the interaction region with temporal animation across a fill.</div><div class="enh-impact">↑ Visual feedback on luminosity hotspots</div></div>
+    </div>
+  </div>
+
+  <!-- COLLAB TAB -->
+  <div id="tab-collab" class="tab-content">
+    <div class="enh-grid">
+      <div class="enh-card"><div class="enh-num">35</div><div class="enh-title">Multiplayer Experiment Control Room</div><div class="enh-desc">Shared vCERN instance with role-based access (Shift Leader, Operator, Guest) and collaborative annotation.</div><div class="enh-impact">↑ Realistic operator training environment</div></div>
+      <div class="enh-card"><div class="enh-num">36</div><div class="enh-title">Version-Controlled Analysis Notebooks</div><div class="enh-desc">Jupyter notebooks with Git-backed versioning and automatic re-execution on upstream parameter changes.</div><div class="enh-impact">↑ Reproducible collaborative workflows</div></div>
+      <div class="enh-card"><div class="enh-num">37</div><div class="enh-title">Open API for External Plugins</div><div class="enh-desc">Documented REST + WebSocket API allowing external groups to plug in custom generators as microservices.</div><div class="enh-impact">↑ Community-contributed physics modules</div></div>
+      <div class="enh-card"><div class="enh-num">38</div><div class="enh-title">Experiment-as-Code Repository</div><div class="enh-desc">Full experiment configurations as declarative YAML/JSON files under version control. One-command reproducibility.</div><div class="enh-impact">↑ A/B comparison of detector design variants</div></div>
+      <div class="enh-card"><div class="enh-num">39</div><div class="enh-title">Federated Identity & Access Control</div><div class="enh-desc">OIDC/SAML integration mapping researcher roles to fine-grained vCERN permissions mirroring CERN VOMS.</div><div class="enh-impact">↑ Secure multi-institution deployment</div></div>
+    </div>
+  </div>
+
+  <!-- INFRA TAB -->
+  <div id="tab-infra" class="tab-content">
+    <div class="enh-grid">
+      <div class="enh-card"><div class="enh-num">40</div><div class="enh-title">Heterogeneous Compute Auto-Router</div><div class="enh-desc">Profiles each task and automatically routes to CPU, GPU, FPGA emulator, or QNVM qubit pool.</div><div class="enh-impact">↑ Optimal resource utilisation, no manual profiling</div></div>
+      <div class="enh-card"><div class="enh-num">41</div><div class="enh-title">Carbon-Aware Scheduler</div><div class="enh-desc">Integrates with real-time grid carbon-intensity APIs to defer non-urgent jobs to low-carbon periods.</div><div class="enh-impact">↑ Up to 35% carbon footprint reduction</div></div>
+      <div class="enh-card"><div class="enh-num">42</div><div class="enh-title">Simulation-as-a-Service Tier</div><div class="enh-desc">Cloud-native SaaS packaging with per-job billing enabling universities to access LHC-quality simulation.</div><div class="enh-impact">↑ Democratises access globally</div></div>
+      <div class="enh-card"><div class="enh-num">43</div><div class="enh-title">eBPF-Based Performance Profiler</div><div class="enh-desc">Always-on eBPF profiler streaming kernel-level telemetry to Prometheus/Grafana with sub-1% overhead.</div><div class="enh-impact">↑ Continuous bottleneck identification</div></div>
+      <div class="enh-card"><div class="enh-num">44</div><div class="enh-title">Chaos Engineering Module</div><div class="enh-desc">Chaos Monkey-style random node failure injection testing Samsara-NULL rebirth under adversarial conditions.</div><div class="enh-impact">↑ Validates fault tolerance before production</div></div>
+      <div class="enh-card"><div class="enh-num">45</div><div class="enh-title">Post-Quantum Encrypted Channels</div><div class="enh-desc">CRYSTALS-Kyber (ML-KEM) post-quantum key encapsulation replacing TLS 1.3 for all inter-node comms.</div><div class="enh-impact">↑ NIST PQC compliant; future-proof archives</div></div>
+      <div class="enh-card"><div class="enh-num">46</div><div class="enh-title">Edge Deployment for Outreach Kiosks</div><div class="enh-desc">Minimal &lt;8 GB Docker container with pre-baked LHC Run 2 dataset for museum kiosks and science fairs.</div><div class="enh-impact">↑ Zero-network physics education worldwide</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FRONTIER ── -->
+<section id="frontier">
+  <div class="section-header">
+    <span class="section-num">04 //</span>
+    <h2 class="section-title">Frontier Enhancements Set II</h2>
+    <span class="section-tag">48 Modules · Beyond HPC</span>
+  </div>
+
+  <div class="frontier-grid" id="frontier-grid">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ── ROADMAP ── -->
+<section id="roadmap">
+  <div class="section-header">
+    <span class="section-num">05 //</span>
+    <h2 class="section-title">Implementation Roadmap</h2>
+    <span class="section-tag">12+ Months</span>
+  </div>
+
+  <div class="roadmap">
+    <div class="phase">
+      <div class="phase-num">01</div>
+      <div class="phase-title">Core Infrastructure</div>
+      <div class="phase-duration">Months 0–3</div>
+      <div class="phase-item">Port EarthSims core.py, httpd.py, alice.py</div>
+      <div class="phase-item">Linear optics beam dynamics engine</div>
+      <div class="phase-item">Dummy detector node with basic digitisation</div>
+      <div class="phase-item">Basic dashboard with accelerator gauges</div>
+      <div class="phase-item">ASS scripting foundation</div>
+      <div class="phase-item">SQLite snapshot persistence</div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">02</div>
+      <div class="phase-title">Physics Modules</div>
+      <div class="phase-duration">Months 3–6</div>
+      <div class="phase-item">MAD-X / pymad integration</div>
+      <div class="phase-item">Geant4-lite wrapper for fast detector sim</div>
+      <div class="phase-item">QNVM integration: track finding</div>
+      <div class="phase-item">PYTHIA event generation interface</div>
+      <div class="phase-item">ROOT-compatible output pipeline</div>
+      <div class="phase-item">Phase 1 enhancement set deployment</div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">03</div>
+      <div class="phase-title">Advanced Features</div>
+      <div class="phase-duration">Months 6–12</div>
+      <div class="phase-item">Multi-node Kubernetes mesh</div>
+      <div class="phase-item">Samsara-NULL rebirth mechanism</div>
+      <div class="phase-item">Full 3D WebXR visualisation</div>
+      <div class="phase-item">GNN track seeder and RL magnet tuner</div>
+      <div class="phase-item">IPFS federated data mesh</div>
+      <div class="phase-item">Phase 2 enhancement set deployment</div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">04</div>
+      <div class="phase-title">Production Release</div>
+      <div class="phase-duration">Months 12+</div>
+      <div class="phase-item">Validate against LHC run data</div>
+      <div class="phase-item">Heavy-ion and fixed-target modes</div>
+      <div class="phase-item">SaaS tier and edge kiosk deployment</div>
+      <div class="phase-item">Frontier Set II (selected modules)</div>
+      <div class="phase-item">Open-source educational release</div>
+      <div class="phase-item">Autonomous theory generator (beta)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RISKS ── -->
+<section id="risks">
+  <div class="section-header">
+    <span class="section-num">06 //</span>
+    <h2 class="section-title">Risks & Mitigations</h2>
+    <span class="section-tag">Risk Register</span>
+  </div>
+
+  <div style="border:1px solid var(--border); overflow:hidden;">
+    <table class="risk-table">
+      <thead>
+        <tr>
+          <th>Risk</th>
+          <th>Severity</th>
+          <th>Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--bright);font-weight:500">Physics models too simplistic</td>
+          <td><span class="badge badge-high">HIGH</span></td>
+          <td>Plug-in interface to external codes (Geant4, ROOT) for full-fidelity users.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--bright);font-weight:500">QNVM emulation overhead</td>
+          <td><span class="badge badge-high">HIGH</span></td>
+          <td>Hybrid approach: CPU for classical tasks, QNVM only for specific bottlenecks.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--bright);font-weight:500">Mesh node coordination complexity</td>
+          <td><span class="badge badge-med">MED</span></td>
+          <td>Adopt proven EarthSims patterns + Kubernetes operators for lifecycle management.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--bright);font-weight:500">Data volume explosion at high luminosity</td>
+          <td><span class="badge badge-high">HIGH</span></td>
+          <td>Holographic compression v2 + Arrow streaming + IPFS tiered storage.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--bright);font-weight:500">Quantum algorithm fidelity at scale</td>
+          <td><span class="badge badge-med">MED</span></td>
+          <td>Zero-noise extrapolation error mitigation layer; topological qubit emulator for long circuits.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--bright);font-weight:500">AI model drift over long simulated runs</td>
+          <td><span class="badge badge-med">MED</span></td>
+          <td>Continual-learning calibration agent with automated drift alerts and retraining triggers.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--bright);font-weight:500">Frontier modules (Set II) viability</td>
+          <td><span class="badge badge-low">LOW</span></td>
+          <td>Phase as research/experimental flags; gate production inclusion behind peer-validated benchmarks.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--bright);font-weight:500">Multi-institution security & data governance</td>
+          <td><span class="badge badge-med">MED</span></td>
+          <td>Federated OIDC/SAML identity, post-quantum encryption, fine-grained experiment-level ACLs.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── SUMMARY ── -->
+<section id="summary">
+  <div class="summary-block">
+    <p style="font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.3em;color:var(--muted);margin-bottom:1rem;text-transform:uppercase">What vCERN Becomes</p>
+    <h2 class="summary-title">A Physics Operating System</h2>
+    <p style="max-width:640px;margin:0 auto;color:var(--muted);font-size:0.95rem">Not a simulator. A living research civilisation substrate — a theory generator, a multiverse laboratory, a digital twin that rewrites itself.</p>
+    <div class="summary-metrics">
+      <div class="metric"><span class="metric-val" style="color:var(--accent)">96</span><span class="metric-label">Total Enhancements</span></div>
+      <div class="metric"><span class="metric-val" style="color:var(--accent2)">8</span><span class="metric-label">Framework Pillars</span></div>
+      <div class="metric"><span class="metric-val" style="color:var(--accent3)">4</span><span class="metric-label">Release Phases</span></div>
+      <div class="metric"><span class="metric-val" style="color:var(--gold)">∞</span><span class="metric-label">Discovery Potential</span></div>
+    </div>
+    <div class="summary-tags">
+      <span class="summary-tag">Physics OS</span>
+      <span class="summary-tag">Research Civilisation Substrate</span>
+      <span class="summary-tag">Theory Generator</span>
+      <span class="summary-tag">Multiverse Laboratory</span>
+      <span class="summary-tag">Recursive Self-Improvement</span>
+      <span class="summary-tag">Digital Twin</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>vCERN Unified Framework · v1.0 · 2026-03-01</span>
+  <span>Built on EarthSims · QNVM · Samsara-NULL</span>
+  <span>96 Enhancements · 8 Pillars · 4 Phases</span>
+</footer>
+
+</div><!-- content-wrapper -->
+
+<script>
+// ── TAB SYSTEM ──
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ── FRONTIER DATA ──
+const frontierData = [
+  { id:'F-01', domain:'Fundamental Physics', title:'Real-Time Lattice QCD Co-Processor', desc:'Distributed lattice-QCD engine for on-demand hadron mass and form-factor calculation during event analysis.' },
+  { id:'F-02', domain:'Fundamental Physics', title:'Non-Perturbative Scattering Emulator', desc:'Neural S-matrix reconstruction trained on dispersion relations and unitarity constraints.' },
+  { id:'F-03', domain:'Fundamental Physics', title:'Emergent Spacetime Module', desc:'AdS/CFT-inspired boundary mapping where detector data reconstructs bulk geometry.' },
+  { id:'F-04', domain:'Fundamental Physics', title:'Running Coupling Visualizer', desc:'Live RGE flow dashboard showing α_s(μ), α_em(μ), α_weak(μ) with interaction scale.' },
+  { id:'F-05', domain:'Fundamental Physics', title:'Exotic Vacuum State Simulator', desc:'Simulates false vacuum decay bubbles and metastable Higgs potential landscapes.' },
+  { id:'F-06', domain:'Fundamental Physics', title:'Axion & Dark Sector Plasma Engine', desc:'Axion-photon mixing in magnetic fields; virtual dark matter detection playground.' },
+  { id:'F-07', domain:'Fundamental Physics', title:'Gravitational Micro-Lensing Module', desc:'Effective gravity signatures from TeV-scale extra dimensions. Randall–Sundrum sandbox.' },
+  { id:'F-08', domain:'Fundamental Physics', title:'CPT Violation Sensitivity Layer', desc:'Adjustable CPT-breaking parameters for neutral meson systems; precision symmetry violation studies.' },
+  { id:'F-09', domain:'Quantum Beyond Emulation', title:'Hybrid Path Integral Solver', desc:'Feynman path integrals mapped to tensor network contraction accelerated by QNVM.' },
+  { id:'F-10', domain:'Quantum Beyond Emulation', title:'Quantum Boltzmann Hadronization', desc:'Quantum sampling for non-equilibrium hadronization distributions; replaces heuristic string models.' },
+  { id:'F-11', domain:'Quantum Beyond Emulation', title:'Entropic Qubit Allocation Engine', desc:'Qubits allocated based on entanglement entropy of the computational subproblem.' },
+  { id:'F-12', domain:'Quantum Beyond Emulation', title:'Time-Crystal Clocking System', desc:'Discrete time crystal logic for ultra-stable QNVM scheduling; coherence independent of timing jitter.' },
+  { id:'F-13', domain:'Quantum Beyond Emulation', title:'Quantum Topology Mapper', desc:'Maps detector geometry into topological qubit graph to optimise track reconstruction routing.' },
+  { id:'F-14', domain:'Quantum Beyond Emulation', title:'QMC Acceleration Layer', desc:'Rare decay sampling by amplitude amplification; reduces rare-event simulation time by orders of magnitude.' },
+  { id:'F-15', domain:'Quantum Beyond Emulation', title:'Quantum Phase Estimation for PID', desc:'Encodes particle mass hypotheses in phase registers for ultra-precise particle ID inference.' },
+  { id:'F-16', domain:'Quantum Beyond Emulation', title:'Decoherence Feedback Stabilizer', desc:'Real-time monitoring of effective quantum entropy with dynamic gate reshaping for sustained computation.' },
+  { id:'F-17', domain:'Next-Gen Detectors', title:'Metamaterial Calorimeter Model', desc:'Programmable-index metamaterial calorimeters for hypothetical ultra-resolution calorimetry.' },
+  { id:'F-18', domain:'Next-Gen Detectors', title:'Cryogenic Quantum Sensor Array', desc:'Superconducting nanowire single-photon detectors modelling extreme low-noise regime.' },
+  { id:'F-19', domain:'Next-Gen Detectors', title:'Attosecond Time-of-Flight', desc:'Attosecond-scale timing jitter simulation enabling 4D tracking capability.' },
+  { id:'F-20', domain:'Next-Gen Detectors', title:'Neuromorphic Front-End Electronics', desc:'Analog spike-based preprocessing before digitisation; on-detector inference simulation.' },
+  { id:'F-21', domain:'Next-Gen Detectors', title:'Programmable Geometry Detector', desc:'Runtime alteration of detector geometry for rapid next-gen detector layout prototyping.' },
+  { id:'F-22', domain:'Next-Gen Detectors', title:'Radiation Damage Evolution Engine', desc:'Crystal lattice damage accumulation modelled over simulated years for long-term aging analysis.' },
+  { id:'F-23', domain:'Next-Gen Detectors', title:'Sub-Quantum Noise Emulator', desc:'Vacuum fluctuation-induced baseline drift; tests sensitivity to ultimate noise floors.' },
+  { id:'F-24', domain:'Next-Gen Detectors', title:'Anti-Matter Capture Simulation', desc:'Dedicated anti-proton and positron confinement modelling for antimatter research integration.' },
+  { id:'F-25', domain:'AI at Researcher Level', title:'Autonomous Theory Generator', desc:'Generates BSM Lagrangians under symmetry constraints and checks self-consistency. AI proposing new physics.' },
+  { id:'F-26', domain:'AI at Researcher Level', title:'Hypothesis Pruning Engine', desc:'Bayesian elimination of model parameter space based on simulated data; automated exclusion plots.' },
+  { id:'F-27', domain:'AI at Researcher Level', title:'Multi-Agent Physics Debate Arena', desc:'Independent theory agents debate interpretations of anomalous data in structured adversarial inference.' },
+  { id:'F-28', domain:'AI at Researcher Level', title:'Self-Writing Analysis Papers', desc:'Generates draft LaTeX papers from simulation results with full reproducibility appendix.' },
+  { id:'F-29', domain:'AI at Researcher Level', title:'Adaptive Detector Designer', desc:'Genetic algorithm proposes geometry changes to maximise discovery reach; evolutionary hardware optimisation.' },
+  { id:'F-30', domain:'AI at Researcher Level', title:'Physics Curriculum Generator', desc:'Auto-generates learning tracks from beginner to advanced collider physics; embedded education layer.' },
+  { id:'F-31', domain:'AI at Researcher Level', title:'Cross-Experiment Knowledge Distillation', desc:'Transfers learned representations between ATLAS/CMS/ALICE/LHCb nodes for unified latent physics space.' },
+  { id:'F-32', domain:'AI at Researcher Level', title:'Rare Event Forecasting Engine', desc:'Predicts probability of discovering new particle within N simulated fills for strategic planning.' },
+  { id:'F-33', domain:'Data Reality Distortion', title:'Synthetic Universe Mode', desc:'Change fundamental constants (c, ħ, α) and rerun physics. Educational multiverse sandbox.' },
+  { id:'F-34', domain:'Data Reality Distortion', title:'Variable Spacetime Metric Engine', desc:'Local curvature variations injected into detector region; GR–QFT interaction sandbox.' },
+  { id:'F-35', domain:'Data Reality Distortion', title:'Event Causality Tracer', desc:'Tracks causal chains from beam injection to reconstructed final state; full provenance beyond data lineage.' },
+  { id:'F-36', domain:'Data Reality Distortion', title:'Temporal Rollback Analysis', desc:'Deterministic replay at sub-nanosecond resolution; time-travel debugging of event evolution.' },
+  { id:'F-37', domain:'Data Reality Distortion', title:'Information-Theoretic Efficiency Metric', desc:'Defines detector efficiency as mutual information between truth and reconstructed states.' },
+  { id:'F-38', domain:'Data Reality Distortion', title:'Entropy Budget Dashboard', desc:'Tracks entropy generation at every stage from beam to reconstruction; thermodynamic view of physics.' },
+  { id:'F-39', domain:'Infrastructure Beyond HPC', title:'Photonic Interconnect Simulation', desc:'Future optical-compute accelerator node modelling for ultra-low-latency mesh architecture.' },
+  { id:'F-40', domain:'Infrastructure Beyond HPC', title:'Neuromorphic Co-Processor Integration', desc:'Brain-inspired silicon for pattern recognition; sub-watt anomaly detection.' },
+  { id:'F-41', domain:'Infrastructure Beyond HPC', title:'Exascale Auto-Sharding Engine', desc:'Dynamic simulation splits across thousands of nodes; no manual job partitioning required.' },
+  { id:'F-42', domain:'Infrastructure Beyond HPC', title:'Energy-Aware Luminosity Optimizer', desc:'Balances discovery potential against power consumption. Physics-per-megawatt performance metric.' },
+  { id:'F-43', domain:'Infrastructure Beyond HPC', title:'Cryogenic Data Center Mode', desc:'Simulates superconducting compute racks for QNVM with thermodynamic integration modelling.' },
+  { id:'F-44', domain:'Infrastructure Beyond HPC', title:'Cosmological Clock Synchronisation', desc:'Pulsar timing references (simulated) for global sync; nanosecond cross-node coherence.' },
+  { id:'F-45', domain:'Philosophical Frontier', title:'Observer Effect Sandbox', desc:'Toggle between Copenhagen and Many-Worlds collapse interpretations; side-by-side comparison.' },
+  { id:'F-46', domain:'Philosophical Frontier', title:'Simulation Hypothesis Detector', desc:'Measures algorithmic compressibility of event space; tests Kolmogorov complexity of simulated universe.' },
+  { id:'F-47', domain:'Philosophical Frontier', title:'Consciousness-In-The-Loop Mode', desc:'Human operators directly influence anomaly scoring weights; studies human–AI co-discovery dynamics.' },
+  { id:'F-48', domain:'Philosophical Frontier', title:'Self-Evolving vCERN Kernel', desc:'Core engine rewrites its own optimisation code based on performance meta-analysis. Bounded recursive self-improvement.' },
+];
+
+const domainColors = {
+  'Fundamental Physics': '#00e5ff',
+  'Quantum Beyond Emulation': '#b8ff57',
+  'Next-Gen Detectors': '#ffd447',
+  'AI at Researcher Level': '#ff3b6b',
+  'Data Reality Distortion': '#c084fc',
+  'Infrastructure Beyond HPC': '#38bdf8',
+  'Philosophical Frontier': '#fb923c',
+};
+
+const grid = document.getElementById('frontier-grid');
+frontierData.forEach(d => {
+  const col = domainColors[d.domain] || '#4a5980';
+  grid.innerHTML += `
+    <div class="frontier-card">
+      <div class="frontier-id" style="color:${col}">${d.id} · ${d.domain}</div>
+      <div class="frontier-title">${d.title}</div>
+      <div class="frontier-desc">${d.desc}</div>
+    </div>`;
+});
+
+// ── PARTICLE BACKGROUND ──
+const canvas = document.getElementById('particle-bg');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+for (let i = 0; i < 120; i++) {
+  particles.push({
+    x: Math.random() * 1920,
+    y: Math.random() * 1080,
+    r: Math.random() * 1.5 + 0.2,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    alpha: Math.random() * 0.5 + 0.1,
+    col: Math.random() > 0.5 ? '#00e5ff' : '#ff3b6b',
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.col;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+  // draw faint connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 100) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = '#00e5ff';
+        ctx.globalAlpha = (1 - dist / 100) * 0.06;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+</script>
+</body>
+</html>
