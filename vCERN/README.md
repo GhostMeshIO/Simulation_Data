@@ -1,0 +1,1 @@
+A living digital twin of the world's most complex particle physics laboratory, fusing classical accelerator physics with quantum-inspired computation, autonomous intelligence, and frontier experimental infrastructure.
