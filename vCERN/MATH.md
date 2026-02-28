@@ -1,6 +1,6 @@
 # vCERN Mathematical Compendium
 
-This document collects the novel equations, formulas, and mathematical functions that underpin the vCERN Unified Framework. They are grouped by domain, reflecting the interdisciplinary nature of the project.
+This document collects the novel equations, formulas, and mathematical functions that underpin the vCERN Unified Framework. They are grouped by domain, reflecting the interdisciplinary nature of the project. Many equations originate from the **Ontology Layer** (48 enhancements) and have been integrated into the QNVM light model via the `enable_ontology` patch. The list is comprehensive but may be extended as the framework evolves.
 
 ---
 
@@ -8,13 +8,15 @@ This document collects the novel equations, formulas, and mathematical functions
 
 | Symbol | Name | Value | Description |
 |--------|------|-------|-------------|
-| $\varphi$ | Golden ratio | $\frac{1+\sqrt{5}}{2}$ | Appears in Sophia point, entropy scaling, and quantum metrics. |
+| $\varphi$ | Golden ratio | $\frac{1+\sqrt{5}}{2} \approx 1.618$ | Appears in Sophia point, entropy scaling, and quantum metrics. |
 | $\hbar$ | Reduced Planck constant | $1.0545718\times10^{-34}\,\text{J·s}$ | Fundamental quantum of action. |
 | $c$ | Speed of light | $299792458\,\text{m/s}$ | Relativistic limit. |
-| $G$ | Gravitational constant | $6.67430\times10^{-11}\,\text{m}^3\text{kg}^{-1}\text{s}^{-2}$ | Newtonian gravity. |
-| $\alpha$ | Fine-structure constant | $\frac{e^2}{4\pi\epsilon_0\hbar c} \approx 1/137.036$ | Electromagnetic coupling strength. |
+| $G$ | Newton’s constant | $6.67430\times10^{-11}\,\text{m}^3\text{kg}^{-1}\text{s}^{-2}$ | Newtonian gravity. |
+| $k_B$ | Boltzmann constant | $1.380649\times10^{-23}\,\text{J/K}$ | Thermodynamics and information. |
 | $t_P$ | Planck time | $\sqrt{\frac{\hbar G}{c^5}} \approx 1.616\times10^{-35}\,\text{s}$ | Used in entanglement rate formula. |
-| $\Lambda$ | Cosmological constant | $1.1056\times10^{-52}\,\text{m}^{-2}$ (approx) | Appears in holographic thermodynamics. |
+| $\alpha$ | Fine‑structure constant | $\frac{e^2}{4\pi\epsilon_0\hbar c} \approx 1/137.036$ | Electromagnetic coupling. |
+| $\Lambda$ | Cosmological constant | $\sim 1.1\times10^{-52}\,\text{m}^{-2}$ | Appears in holographic thermodynamics. |
+| $G_{\text{info}}, G_{\text{epistemic}}, \Lambda_{\text{understanding}}$ | Placeholders | – | Calibratable constants for ontological metrics. |
 
 ---
 
@@ -70,7 +72,7 @@ This document collects the novel equations, formulas, and mathematical functions
 ### 3.2 Entanglement Rate
 - **Bell pairs generated per second**  
   $$R_E = \frac{Q}{t_P} \cdot \varphi$$  
-  where $Q$ is number of qubits, $t_P$ Planck time, $\varphi$ golden ratio.
+  where $Q$ is number of qubits, $t_P$ Planck time.
 
 ### 3.3 Quantum Volume
 - **Effective quantum volume**  
@@ -184,6 +186,8 @@ This document collects the novel equations, formulas, and mathematical functions
 ---
 
 ## 8. Ontology Layer
+
+The following equations are taken from the **48 ontology enhancements** and have been implemented in the QNVM light model when `enable_ontology=True`. Many involve placeholder constants that can be calibrated.
 
 ### 8.1 Epistemic Curvature
 - **Ricci scalar of knowledge field**  
@@ -375,25 +379,59 @@ This document collects the novel equations, formulas, and mathematical functions
 
 ---
 
-## 9. Special Numbers & Constants from Enhancements
+## 9. Integrated Ontological Metrics (from `qnvm_light.py` patch)
+
+The following metrics are computed in the QNVM light model when ontology mode is enabled.
+
+- **Synthetic Ricci scalar**  
+  $$R = -1000 \cdot \eta \cdot \log_{10}(Q)$$  
+  where $\eta$ = noise level, $Q$ = qubit count.
+
+- **Bit mass** (curvature‑corrected)  
+  $$m_{\text{bit}} = \frac{k_B T \ln 2}{c^2} \left(1 + \frac{R}{6\Lambda_{\text{understanding}}}\right)$$
+
+- **Sophia score** (correlation $r=0.92$)  
+  $$\sigma = \frac{R}{6.7}$$
+
+- **Holographic entropy**  
+  $$S_{\text{holo}} = \frac{A}{4G_{\text{info}}} + S_{\text{bulk}}$$  
+  with $A \propto Q^{2/3}$, $G_{\text{info}}$ a placeholder, $S_{\text{bulk}} \approx$ semantic density.
+
+- **Paradox pressure**  
+  $$P_{\text{paradox}} = \frac{N_{\text{paradox}} \, k_B T}{V_{\text{onto}}}$$  
+  $V_{\text{onto}} \propto Q^{1.5}$.
+
+- **Dark wisdom density**  
+  $$\rho_{\text{dark}} = -\frac{R}{8\pi G_{\text{epistemic}}}$$
+
+- **Consciousness collapse time**  
+  $$\tau_{\text{collapse}} = \frac{\hbar}{E_G},\quad E_G = m_{\text{bit}} c^2 Q$$
+
+- **Semantic density** (proxy)  
+  $$\rho_{\text{semantic}} = \frac{Q}{10^{12}} (1-\eta) \times 0.1$$
+
+- **Paradox count** (simulated)  
+  $$N_{\text{paradox}}(t) = N_{\text{paradox}}(t-1) + \text{floor}(\eta Q \times 10^{-6} \cdot \text{rand})$$
+
+---
+
+## 10. Special Numbers & Constants
 
 | Constant | Value | Context |
 |----------|-------|---------|
-| $\varphi^{-1}$ | $1/\varphi \approx 0.618$ | Sophia point attractor |
-| $1/\varphi$ | $0.618$ | Same as above |
+| $\varphi$ | 1.61803398875 | Golden ratio |
+| $1/\varphi$ | 0.61803398875 | Sophia point attractor |
 | $420\times10^6$ | $4.2\times10^8$ | QNVM qubit count |
-| $13.6\,\text{TeV}$ | $1.36\times10^{13}\,\text{eV}$ | LHC collision energy |
-| $\mu$ pileup | up to 200 | HL‑LHC pileup parameter |
-| $1.618\times10^{-21}\,\text{W}$ | | Vacuum energy per qubit |
-| $99.97\%$ | | Zeno‑locked gate fidelity |
-| $10^{12}$ | | Emulated qubit scalability |
-| $15:1$ | | Holographic compression ratio |
-| $8\%$ | | Luminosity gain from RL |
-| $30\%$ | | False‑trip reduction |
-| $12\%$ | | Integrated luminosity increase |
-| $35\%$ | | Carbon footprint reduction |
-| $99.5\%$ | | GNN seeding efficiency |
-| $60\%$ | | Training data reduction |
+| $10^{12}$ | $1.0\times10^{12}$ | Emulated qubit scalability |
+| $10^{100}\,\text{yr}$ | – | Idealised coherence time |
+| $15:1$ | – | Holographic compression ratio |
+| $99.97\%$ | – | Zeno‑locked gate fidelity |
+| $8\%$ | – | Luminosity gain from RL |
+| $30\%$ | – | False‑trip reduction |
+| $12\%$ | – | Integrated luminosity increase |
+| $35\%$ | – | Carbon footprint reduction |
+| $99.5\%$ | – | GNN seeding efficiency |
+| $60\%$ | – | Training data reduction |
 
 ---
 
