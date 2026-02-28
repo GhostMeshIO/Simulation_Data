@@ -6,16 +6,17 @@ https://soundcloud.com/nebulanug/a-z-original-samsara-the
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-2.0-brightgreen" alt="Version 2.0">
-  <img src="https://img.shields.io/badge/enhancements-144-blueviolet" alt="144 Enhancements">
+  <img src="https://img.shields.io/badge/enhancements-240-blueviolet" alt="240 Enhancements">
   <img src="https://img.shields.io/badge/qubits-420M-ff69b4" alt="420M Qubits">
   <img src="https://img.shields.io/badge/pillars-11-orange" alt="11 Pillars">
+  <img src="https://img.shields.io/badge/sets-7-purple" alt="7 Enhancement Sets">
   <img src="https://img.shields.io/badge/status-active--development-success" alt="Active Development">
 </p>
 
 **vCERN** is a living digital twin of the world’s most complex particle physics laboratory — fusing accelerator science, quantum computation, autonomous AI, and ontological frontier research into a single civilisation-grade infrastructure. It is not merely a simulator; it is a **physics operating system** that observes itself, rewrites its own kernel, and explores the multiverse of possible physics.
 
 - **Core mission**: Provide a unified, extensible platform for high-energy physics simulation, quantum-enhanced analysis, and recursive self-improvement.
-- **Key stats**: 144 enhancements across 11 pillars, powered by a **420M‑qubit QNVM** (Quantum Neural Virtual Machine) substrate.
+- **Key stats**: 240 enhancements across 11 pillars, powered by a **420M‑qubit QNVM** (Quantum Neural Virtual Machine) substrate.
 - **Output**: From real-time beam dynamics to Gödelian anomaly visualisation, vCERN delivers a complete virtual CERN experience.
 
 ---
@@ -104,7 +105,7 @@ vCERN is organised into 11 domain pillars, each containing multiple enhancements
 | 10 | Data Reality Distortion | Synthetic universe mode, variable spacetime, causality tracer, temporal rollback, entropy budget. | 6 |
 | 11 | Ontology Layer | Epistemic curvature, autopoietic code, Gödelian engines, fractal logic, consciousness fields, holographic thermodynamics. | 48 |
 
-**Total enhancements: 144**
+**Total enhancements: 240**
 
 ---
 
@@ -134,7 +135,7 @@ The simulation is distributed across a Kubernetes‑managed mesh of specialised 
 | **Sector Node** | LHC Sectors 1–8 | Beam pipe, magnets, vacuum; runs MAD‑X/PTC with space‑charge and beam‑beam effects. |
 | **Detector Node** | ATLAS subdetectors (Pixel, SCT, TRT, LAr, Tile, Muon) | Geant4‑lite response, digitisation, quantum‑inspired track fitting, continual learning calibration. |
 | **Trigger Node** | L1, HLT | ASS‑programmable trigger logic with federated budget management across experiments. |
-| **Analysis Node** | Higgs, SUSY, Flavour, Heavy‑Ion | Offline algorithms; normalising‑flow anomaly detection, PhysFormer classifier, self‑writing paper generator. |
+| **Analysis Node** | Higgs, SUSY, Flavour, Heavy-Ion | Offline algorithms; normalising‑flow anomaly detection, PhysFormer classifier, self‑writing paper generator. |
 | **Control Node** | CCC (CERN Control Centre) | Executes ASS scripts, intent‑based compiler, RL magnet tuner. |
 | **QNVM Node** | Quantum Substrate Cluster | Dedicated high‑memory node running the 420M‑qubit emulation. |
 | **Ontology Node** | Epistemic / Fractal / Consciousness | Gödelian engines, autopoietic logic evolver, epistemic curvature analyzer, consciousness fields. |
@@ -183,7 +184,7 @@ ASS is **intent‑compiled**: operators specify goals, and the system generates 
 
 ## Enhancement Sets
 
-vCERN is developed in three cumulative sets, totalling **144 enhancements**.
+vCERN is developed in three cumulative sets, totalling **240 enhancements**.
 
 ### Set I – Core Modules (48)
 
@@ -265,9 +266,9 @@ vCERN is developed in four phases over 12+ months.
 vCERN is **not a simulator**. It is a **civilisation‑scale research substrate** – a theory generator, a multiverse laboratory, a digital twin that observes itself observing itself, and rewrites its own kernel from within.
 
 **Final state metrics:**
-- 144 enhancements
+- 240 enhancements
 - 11 pillars
-- 4 release phases
+- 7 enhancement sets
 - 420M qubits (emulated)
 - ∞ epistemic horizon
 
