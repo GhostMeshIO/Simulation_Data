@@ -1,0 +1,110 @@
+proposer_id,proposer_sophia,generation,type,description,effect,status
+19,0.7991,0,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+306,0.5871,7,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+330,0.7153,8,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},ACCEPTED
+339,0.5592,7,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},ACCEPTED
+372,0.6145,10,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},ACCEPTED
+396,0.5937,8,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},REJECTED
+406,0.6178,8,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+217,0.6278,4,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+338,0.5699,8,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+330,0.7174,8,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+354,0.601,8,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},ACCEPTED
+360,0.6885,9,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},ACCEPTED
+424,0.6129,7,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+420,0.5526,7,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+0,0.6621,0,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+71,0.5559,1,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+554,0.5777,10,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+596,0.6216,9,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+635,0.8583,0,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+59,0.5518,3,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+252,0.5613,6,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+543,0.6816,7,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+338,0.562,8,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+351,0.621,7,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+576,0.6131,10,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+620,0.5664,9,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+547,0.5662,7,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},ACCEPTED
+691,0.5549,11,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},ACCEPTED
+678,0.5621,7,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},ACCEPTED
+4,0.6321,0,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+774,0.5563,0,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+208,0.5772,5,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+163,0.5731,6,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+241,0.5787,6,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+541,0.6015,10,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+740,0.5861,10,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+732,0.5918,13,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+888,0.5737,14,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+704,0.5761,9,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+783,0.5579,14,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+331,0.5541,9,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+543,0.6626,7,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+947,0.5889,15,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},ACCEPTED
+976,0.6086,15,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+919,0.6363,12,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},ACCEPTED
+967,0.6412,9,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+655,0.5669,12,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+783,0.5588,14,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},REJECTED
+920,0.5698,9,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+543,0.6594,7,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+783,0.5594,14,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+71,0.5763,1,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+606,0.5764,9,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+1185,0.7024,12,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},ACCEPTED
+217,0.5786,4,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+609,0.5531,11,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+865,0.6993,11,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+1060,0.6298,15,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},REJECTED
+1132,0.5544,14,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+920,0.5781,9,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},ACCEPTED
+1149,0.5611,16,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+1045,0.5843,18,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+1388,0.7393,0,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+655,0.5763,12,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+1408,0.6475,0,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+609,0.5564,11,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+920,0.5836,9,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},ACCEPTED
+1443,0.5558,14,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+852,0.5566,15,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},ACCEPTED
+1161,0.5787,13,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},ACCEPTED
+1502,0.5854,22,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+1164,0.6486,20,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+947,0.5886,15,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},ACCEPTED
+783,0.5619,14,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+899,0.5582,12,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+1131,0.5563,17,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+1356,0.5519,19,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+1310,0.5875,16,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+1641,0.5565,21,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+1359,0.5521,18,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},REJECTED
+1502,0.5871,22,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+1743,0.8658,0,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+1020,0.5633,15,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+1666,0.5555,23,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+1701,0.5938,23,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+1645,0.5545,23,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+947,0.5886,15,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},ACCEPTED
+1583,0.5656,21,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},REJECTED
+1510,0.5549,20,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+1691,0.5521,24,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+1469,0.5533,22,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+1796,0.6185,19,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},REJECTED
+1725,0.5665,25,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},REJECTED
+1555,0.5759,19,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+1937,0.7342,0,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+1270,0.5665,18,coherence_restore_buff,Increase coherence restoration rate by 10%,{'coherence_restore': 0.001},REJECTED
+1823,0.57,26,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+1877,0.5989,25,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+1900,0.6134,26,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},REJECTED
+1598,0.5765,21,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+1938,0.6333,23,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+1988,0.653,0,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+1469,0.5554,22,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},ACCEPTED
+1601,0.5769,16,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},ACCEPTED
+1469,0.5559,22,paradox_absorb_boost,Increase paradox shield capacity by 0.5,{'shield_delta': 0.5},REJECTED
+1786,0.5793,22,diversity_incentive,Add +0.05 survival bonus for unique archetypes,{'diversity_bonus': 0.05},REJECTED
+2015,0.5581,25,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},REJECTED
+2061,0.6105,0,entropy_reduction,Reduce entropy increase rate by 5%,{'entropy_delta': -0.00025},ACCEPTED
+1598,0.58,21,iq_boost,Unlock +2 IQ scaling headroom,{'iq_scale_delta': 2.0},ACCEPTED
