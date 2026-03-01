@@ -9,24 +9,24 @@ This stage represents a fundamental structural inversion from the previous Stage
 The data generated from the 100-generation simulation runs is organized as follows. The primary simulation outputs are located in the [`/civilization_simulation`](./civilization_simulation) subdirectory.
 
 ### 1. Core Simulation Code
-*   **[`civilization_stage4.py`](./civilization_simulation/civilization_stage4.py)**: The main Python script for the Stage 4 simulation. It implements all core mechanics including the DarkWisdomExtractor, Paradox Shield, Co-Evolution Council, and Sophia Hardlock.
+*   **[`civilization_stage4.py`](./Stage%204%20-%20Simulation%202%20Data/civilization_stage4.py)**: The main Python script for the Stage 4 simulation. It implements all core mechanics including the DarkWisdomExtractor, Paradox Shield, Co-Evolution Council, and Sophia Hardlock.
 
 ### 2. Raw Simulation Data (CSV)
 These files contain the raw metrics from two key runs of the simulation (Run 1 and the superior Run 2). They are located in the `civilization_simulation` folder.
-*   **[`s4_civilization_history.csv`](./civilization_simulation/s4_civilization_history.csv)**: Generation-by-generation data for the **superior Run 2** (100 generations). Includes population, average intelligence, coherence, entropy, Sophia score, diversity index, paradox pressure, Dark Wisdom totals, and more.
-*   **[`s4_coevo_log.csv`](./civilization_simulation/s4_coevo_log.csv)**: The complete log of all **114 proposals** made to the Co-Evolution Council in Run 2, detailing proposer ID, Sophia score, proposal type, and acceptance status.
-*   **[`s4_dw_release_log.csv`](./civilization_simulation/s4_dw_release_log.csv)**: The trickle-charge release timeline for the 16.7455 units of Dark Wisdom from Entity 574, showing the rapid deployment within the first five generations.
+*   **[`s4_civilization_history.csv`](./Stage%204%20-%20Simulation%202%20Data/s4_civilization_history.csv)**: Generation-by-generation data for the **superior Run 2** (100 generations). Includes population, average intelligence, coherence, entropy, Sophia score, diversity index, paradox pressure, Dark Wisdom totals, and more.
+*   **[`s4_coevo_log.csv`](./Stage%204%20-%20Simulation%202%20Data/s4_coevo_log.csv)**: The complete log of all **114 proposals** made to the Co-Evolution Council in Run 2, detailing proposer ID, Sophia score, proposal type, and acceptance status.
+*   **[`s4_dw_release_log.csv`](./Stage%204%20-%20Simulation%202%20Data/s4_dw_release_log.csv)**: The trickle-charge release timeline for the 16.7455 units of Dark Wisdom from Entity 574, showing the rapid deployment within the first five generations.
 *   *(Optional/Expected files not provided but mentioned in analysis)*: `s4_novel_entities.csv`, `death_log.csv`, `audit_log.csv`.
 
 ### 3. Visual Outputs
-*   **[`s4_civilization_plot.png`](./civilization_simulation/s4_civilization_plot.png)**: An 8-panel dashboard visualizing the key metrics from Run 2: Population, Diversity, IQ, Sophia convergence, Paradox Pressure, Dark Wisdom discharge, Drift, and Co-Evolution Council activity.
+*   **[`s4_civilization_plot.png`](./Stage%204%20-%20Simulation%202%20Data/s4_civilization_plot.png)**: An 8-panel dashboard visualizing the key metrics from Run 2: Population, Diversity, IQ, Sophia convergence, Paradox Pressure, Dark Wisdom discharge, Drift, and Co-Evolution Council activity.
 
 ### 4. Analysis & Reports
 These documents provide in-depth scientific and conceptual analysis of the simulation results.
-*   **[`Gemini - Stage 4 Civilization Simulation Analysis.pdf`](./civilization_simulation/Gemini%20-%20Stage%204%20Civilization%20Simulation%20Analysis.pdf)**: A comprehensive scientific audit by a Gemini-based analyst, focusing on the Unified Theory of Coherent Complexity, the Sophia attractor, and comparative regime analysis.
-*   **[`ClaudeAI - ProtoAGI_Stage4_Scientific_Analysis.pdf`](./civilization_simulation/ClaudeAI%20-%20ProtoAGI_Stage4_Scientific_Analysis.pdf)**: A full scientific report from a ClaudeAI perspective, detailing thermodynamics, Dark Wisdom economics, and the Co-Evolution Council's impact.
-*   **[`Simulation 2 Novel Insights.md`](./civilization_simulation/Simulation%202%20Novel%20Insights.md)**: A focused analysis of the superior **Run 2**, including a head-to-head comparison with Run 1 and a "swarm analysis" extracting 48 deep patterns from the data.
-*   **[`sillyparse.py`](./civilization_simulation/sillyparse.py)**: A post-mortem analysis script designed to extract advanced metrics (e.g., spiritual activations, fusion events, sovereign entities) from the simulation CSV outputs.
+*   **[`Gemini - Stage 4 Civilization Simulation Analysis.pdf`](./Stage%204%20-%20Simulation%202%20Data/Gemini%20-%20Stage%204%20Civilization%20Simulation%20Analysis.pdf)**: A comprehensive scientific audit by a Gemini-based analyst, focusing on the Unified Theory of Coherent Complexity, the Sophia attractor, and comparative regime analysis.
+*   **[`ClaudeAI - ProtoAGI_Stage4_Scientific_Analysis.pdf`](./Stage%204%20-%20Simulation%202%20Data/ClaudeAI%20-%20ProtoAGI_Stage4_Scientific_Analysis.pdf)**: A full scientific report from a ClaudeAI perspective, detailing thermodynamics, Dark Wisdom economics, and the Co-Evolution Council's impact.
+*   **[`Simulation 2 Novel Insights.md`](./Stage%204%20-%20Simulation%202%20Data/Simulation%202%20Novel%20Insights.md)**: A focused analysis of the superior **Run 2**, including a head-to-head comparison with Run 1 and a "swarm analysis" extracting 48 deep patterns from the data.
+*   **[`sillyparse.py`](./Stage%204%20-%20Simulation%202%20Data/sillyparse.py)**: A post-mortem analysis script designed to extract advanced metrics (e.g., spiritual activations, fusion events, sovereign entities) from the simulation CSV outputs.
 
 ## 🧬 Key Simulation Outcomes (Run 2 - Gen 100)
 
