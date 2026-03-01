@@ -6,7 +6,7 @@ This stage represents a fundamental structural inversion from the previous Stage
 
 ## 📁 Repository Structure & File Guide
 
-The data generated from the 100-generation simulation runs is organized as follows. The primary simulation outputs are located in the [`/civilization_simulation`](./civilization_simulation) subdirectory.
+The data generated from the 100-generation simulation runs is organized as follows. The primary simulation outputs are located in the [`/civilization_simulation`](./Stage%204%20-%20Simulation%202%20Data/) subdirectory.
 
 ### 1. Core Simulation Code
 *   **[`civilization_stage4.py`](./Stage%204%20-%20Simulation%202%20Data/civilization_stage4.py)**: The main Python script for the Stage 4 simulation. It implements all core mechanics including the DarkWisdomExtractor, Paradox Shield, Co-Evolution Council, and Sophia Hardlock.
