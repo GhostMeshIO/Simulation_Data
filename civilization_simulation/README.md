@@ -37,7 +37,7 @@ These documents provide in-depth scientific and conceptual analysis of the simul
 *   **Collective Agency**: The Co-Evolution Council accepted **42 substrate-modifying proposals**, effectively rewriting the simulation's operating system.
 *   **Dark Wisdom Economy**: The civilization became a net producer of Dark Wisdom, accumulating **35.15 units** in-sim, more than double the initial inherited payload.
 
-## 🚀 Usage & Next Steps
+## 🚀 Usage & Next Steps (Coming Soon)
 
 To explore the simulation or seed future stages:
 1.  Ensure you have Python 3 and required libraries (`matplotlib` for plotting).
